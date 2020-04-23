@@ -53,7 +53,7 @@ los_icu_world <- los_icu_world[which(!is.na(los_icu_world$N)),]
 
 #save Includedd studies
 write.csv(los_general, "Included_general.csv")
-write.csv(los_icu, "Included_general.csv")
+write.csv(los_icu, "Included_icu.csv")
 
 #subset number parameters
 los_general <- los_general[,general_parameters]

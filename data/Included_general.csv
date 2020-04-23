@@ -1,9 +1,44 @@
 "","Included","Author","los_group","End.point","Country","plot_cat","N","LOS_med","LOS_q25","LOS_q75","LOS_mean","LOS_sd","LOS_ICU_med","LOS_ICU_q25","LOS_ICU_q75","LOS_ICU_mean","LOS_ICU_sd","info_count"
+"1",1,"Bhatraju et al.","general","Discharge or death","US","main",24,12,8,18,NA,NA,9,4,14,NA,NA,4
+"3",1,"Cai et al.","general","Discharge or death","China","main",298,20.5,15,26,NA,NA,NA,NA,NA,NA,NA,4
 "6",1,"Cao et al.","general/ICU","Discharged or death","China","main",199,15,12,17,NA,NA,10,5,14,NA,NA,4
-"32",1,"Graselli et al","ICU","ICU discharge/death","Italy","main",1591,NA,NA,NA,NA,NA,9,6,13,NA,NA,4
-"38",1,"ICNARC","ICU","Discharge","UK","main",1437,NA,NA,NA,NA,NA,5,2,9,NA,NA,4
-"39",1,"ICNARC","ICU","Death","UK","main",1499,NA,NA,NA,NA,NA,6,4,10,NA,NA,4
-"90",1,"Yang et al.","ICU","Death","China","main",32,NA,NA,NA,NA,NA,7,3,11,NA,NA,4
-"96",1,"Zhang et al.","ICU","Discharge to ward","China","main",23,NA,NA,NA,NA,NA,8,5,13,NA,NA,4
-"97",1,"Zhang et al.","ICU","Death in ICU","China","main",9,NA,NA,NA,NA,NA,11,4.5,14.5,NA,NA,4
+"15",1,"Cao et al.","general","Survival or death","China","main",102,11,7,15,NA,NA,NA,NA,NA,NA,NA,4
+"18",1,"Chen et al","general","Discharge","China","main",215,16,12,20,NA,NA,NA,NA,NA,NA,NA,4
+"19",1,"Chen et al.","general","Discharge or death","China","main",274,13,6,17,NA,NA,NA,NA,NA,NA,NA,4
+"22",1,"Chen et al.","general","Discharge","China","main",159,12,10,15,NA,NA,NA,NA,NA,NA,NA,4
+"26",1,"Cheng et al ","general","Death","China","main",89,5,2,6,NA,NA,NA,NA,NA,NA,NA,4
+"27",1,"Ding et al.","general","Discharge","China","main",5,NA,NA,NA,18.4,7.02,NA,NA,NA,NA,NA,3
+"28",1,"Du et al.","general","Death","China","main",85,NA,NA,NA,6.35,4.51,NA,NA,NA,NA,NA,3
+"35",1,"Guan et al.","general","Discharge and death","China","main",1099,12,10,14,NA,NA,NA,NA,NA,NA,NA,4
+"41",1,"ISARIC","general","Discharge or death","Worldwide (25 countries)","main",1567,NA,NA,NA,7.2,6.6,NA,NA,NA,NA,NA,3
+"43",1,"Liu et al.","general","Discharge","China","main",64,12.5,9,19.8,NA,NA,NA,NA,NA,NA,NA,4
+"46",1,"Liu et al.","general","Discharged (3 transferred, 7 discharged)","China","main",10,13,4,17,NA,NA,NA,NA,NA,NA,NA,4
+"47",1,"Liu et al. ","general","Discharge or death","China","main",51,12,9,13,NA,NA,NA,NA,NA,NA,NA,4
+"50",1,"Mo et al.","general","Death","China","main",22,10.5,8,16,NA,NA,NA,NA,NA,NA,NA,4
+"52",1,"Pan et al.","general","Discharge","China","main",21,NA,NA,NA,17,4,NA,NA,NA,NA,NA,3
+"53",1,"Qi et al.","general","Death or discharge (not clear)","China","main",164,15,11.5,16,NA,NA,NA,NA,NA,NA,NA,4
+"56",1,"Qui et al","general","Discharge","China","main",36,NA,NA,NA,14,3,NA,NA,NA,NA,NA,3
+"62",1,"Shi et al.","general","Discharge","China","main",21,29,17,42,NA,NA,NA,NA,NA,NA,NA,4
+"63",1,"Shi et al.","general","","China","main",21,27,24,31,NA,NA,NA,NA,NA,NA,NA,4
+"66",1,"Shi et al.","general","Discharge","China","main",24,25,20,27,NA,NA,NA,NA,NA,NA,NA,4
+"67",1,"Shi et al.","general","","China","main",5,19,11,25,NA,NA,NA,NA,NA,NA,NA,4
+"70",1,"Tang et al.","general","Discharge or death","China","main",73,13,10,18,NA,NA,NA,NA,NA,NA,NA,4
+"71",1,"Tian et al.","general","Unknown","China","main",37,NA,NA,NA,16.1,6.2,NA,NA,NA,NA,NA,3
+"72",1,"Wang et al.","general","Discharge, hospitalised, or death","China","main",339,28,15,28,NA,NA,NA,NA,NA,NA,NA,4
+"76",1,"Wu et al.","general","Discharge","China","main",145,12,9,14,NA,NA,NA,NA,NA,NA,NA,4
+"77",1,"Wu et al.","general","Death","China","main",43,7,4,11,NA,NA,NA,NA,NA,NA,NA,4
+"79",1,"Wu et al.","general","Discharge","China","main",144,13,10,16,NA,NA,NA,NA,NA,NA,NA,4
+"85",1,"Yan et al.","general","Discharge","China","main",120,21,17,26,NA,NA,NA,NA,NA,NA,NA,4
+"88",1,"Yan et al.","general","Discharged","China","main",116,16,12,20,NA,NA,NA,NA,NA,NA,NA,4
+"89",1,"Yan et al.","general","Death","China","main",109,8,4,13,NA,NA,NA,NA,NA,NA,NA,4
+"92",1,"Yuan et al.","general","Discharged","China","main",94,NA,NA,NA,14.28,3.31,NA,NA,NA,NA,NA,3
+"100",1,"Zhao et al. ","general","Discharge and death","China","main",77,13,10,18,NA,NA,NA,NA,NA,NA,NA,4
 "105",1,"Zhou et al.","general/ICU","Death or discharge","China","main",191,11,7,14,NA,NA,8,4,12,NA,NA,4
+"108",1,"Wang et al.","general","Dead or discharged","China","main",538,19,14,23,NA,NA,NA,NA,NA,NA,NA,4
+"111",1,"Wu et al.","general","Discharge","China","main",175,16,7,30,NA,NA,NA,NA,NA,NA,NA,4
+"116",1,"Yin et al.","general","Discharge","China","main",66,NA,NA,NA,17.8,6.1,NA,NA,NA,NA,NA,3
+"119",1,"Tian et al.","general","Discharge","China","main",59,17,11,20,NA,NA,NA,NA,NA,NA,NA,4
+"120",1,"Petrilli et al.","general","Discharge or death","USA","main",1273,4.8,3.3,7.6,NA,NA,NA,NA,NA,NA,NA,4
+"123",1,"Zeng et al.","general","Discharge or death","China","main",274,20,14,27,NA,NA,NA,NA,NA,NA,NA,4
+"128",1,"Xiao et al.","general","Discharge or death","China","main",287,18,12,23,NA,NA,NA,NA,NA,NA,NA,4
+"132",1,"Cheng et al.","general","Death","China","main",113,6,3,12,NA,NA,NA,NA,NA,NA,NA,4

@@ -10,7 +10,7 @@ source("comb_dist_data.R")
 # interquatile range. Can change to something else but have to do equivalent in qunatiles
 iqr <- c(0.25,0.5,0.75)
 sample_size <- 100000
-set.seed(642)
+set.seed(643)
 
 # Run the function to create the overall distribution.
 # init_values for the fitting must be in right area to get a good fit.

@@ -1,0 +1,9 @@
+"","Included","Author","los_group","End.point","Country","plot_cat","N","LOS_med","LOS_q25","LOS_q75","LOS_mean","LOS_sd","LOS_ICU_med","LOS_ICU_q25","LOS_ICU_q75","LOS_ICU_mean","LOS_ICU_sd","info_count"
+"6",1,"Cao et al.","general/ICU","Discharged or death","China","main",199,15,12,17,NA,NA,10,5,14,NA,NA,4
+"32",1,"Graselli et al","ICU","ICU discharge/death","Italy","main",1591,NA,NA,NA,NA,NA,9,6,13,NA,NA,4
+"38",1,"ICNARC","ICU","Discharge","UK","main",1437,NA,NA,NA,NA,NA,5,2,9,NA,NA,4
+"39",1,"ICNARC","ICU","Death","UK","main",1499,NA,NA,NA,NA,NA,6,4,10,NA,NA,4
+"90",1,"Yang et al.","ICU","Death","China","main",32,NA,NA,NA,NA,NA,7,3,11,NA,NA,4
+"96",1,"Zhang et al.","ICU","Discharge to ward","China","main",23,NA,NA,NA,NA,NA,8,5,13,NA,NA,4
+"97",1,"Zhang et al.","ICU","Death in ICU","China","main",9,NA,NA,NA,NA,NA,11,4.5,14.5,NA,NA,4
+"105",1,"Zhou et al.","general/ICU","Death or discharge","China","main",191,11,7,14,NA,NA,8,4,12,NA,NA,4
