@@ -80,9 +80,8 @@ create_dist_weibull_discrete <- function(quants, sizes, sample_size=10000, init_
   dis_weibulls <- lapply(all_dists, function(x) discrete_dist(x)) 
   # calculate the propotional sample sizes
   all_dists["prop_samples",] <- sapply(all_dists["N",], function(x) x/sum(all_dists["N",]))
-  
   # sample from multinomial to determine how many targets to include
-  all_dists["samples_taken",] <- rmultinom(n = 1, size = 1000, prob = all_dists["prop_samples",])
+  all_dists["samples_taken",] <- rmultinom(n = 1, size = sample_size, prob = all_dists["prop_samples",])
   # sample from the overall distributions
   all_samples <- c()
   for(i in 1:length(dis_weibulls)){
@@ -128,10 +127,11 @@ plot_hist <- function(icu_china, icu_world, general_china, general_world){
   
   all_samples <- rbind(icu_china, icu_world, general_china, general_world)
 
-  HIST_PLOT <- ggplot(all_samples, aes(x=samples)) + 
-    geom_histogram(bins=30)+ 
+  HIST_PLOT <- ggplot(all_samples, aes(x=samples, fill = location)) + 
+    geom_histogram(bins=80)+ 
     facet_grid(location~type) + theme_bw() + 
-    scale_x_continuous(breaks = seq(0, 65, by = 5))
+    scale_x_continuous(breaks = seq(0, 80, by = 5), limits=c(0,80)) + 
+    labs(x ="Length of Stay (days)", y="Counts")
   
   return(HIST_PLOT)
   

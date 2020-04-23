@@ -2,13 +2,14 @@
 # propotionaly based on the data set size. 
 
 # Load in the functions
+setwd("~/Documents/GitHub/los_review/code/")
 source("comb_dist_funcs.R")
 source("comb_dist_data.R")
 ###### INPUT ######
 
 # interquatile range. Can change to something else but have to do equivalent in qunatiles
 iqr <- c(0.25,0.5,0.75)
-sample_size <- 10000000
+sample_size <- 100000
 set.seed(642)
 
 # Run the function to create the overall distribution.
