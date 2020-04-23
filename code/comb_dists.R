@@ -91,6 +91,15 @@ HIST_PLOT
 
 dev.off()
 
+quants_china_general <- quantile(all_samples_general_china,
+                                 probs=iqr)
+quants_china_icu <- quantile(all_samples_icu_china,
+                                 probs=iqr)
+quants_world_general <- quantile(all_samples_general_world,
+                                 probs=iqr)
+quants_world_icu <- quantile(all_samples_icu_world,
+                                 probs=iqr)
+
 ###### FIT OVERALL DISTRIBUTION ####### - doesn't work, probably because of 0s
 #dweibull_overall <- estdweibull(all_samples_general)
 
