@@ -123,15 +123,19 @@ plot_hist <- function(icu_china, icu_world, general_china, general_world){
   icu_world <- data.frame(samples =icu_world, location = "Rest of World", type = "ICU")
   general_china <- data.frame(samples =general_china, location = "China", type = "General")
   general_world <- data.frame(samples =general_world, location = "Rest of World", type = "General")
-
   
   all_samples <- rbind(icu_china, icu_world, general_china, general_world)
+
+ vline_data <- all_samples %>%
+    group_by(location,type) %>%
+  summarize(z=median(samples))
 
   HIST_PLOT <- ggplot(all_samples, aes(x=samples, fill = location)) + 
     geom_histogram(bins=61)+ 
     facet_grid(location~type) + theme_bw() + 
     scale_x_continuous(breaks = seq(0, 60, by = 5), limits=c(0,60)) + 
-    labs(x ="Length of Stay (days)", y="Counts")
+    labs(x ="Length of Stay (days)", y="Counts") +
+    geom_vline(aes(xintercept = z), vline_data, colour = "black", linetype= "dashed")
   
   return(HIST_PLOT)
   
