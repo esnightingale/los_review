@@ -49,13 +49,14 @@ weibull_mean <- function(input){
   return(parameters)
 }
 
-######### OVERALL WRAPPERS ######
+######### OVERALL WRAPPER ######
 
 #calculate the overall sample
 create_dist_weibull_discrete <- function(quants, sizes, sample_size=10000, init_values){
   # for subset that contains medians
   quants_iqr <- quants[which(!is.na(quants$LOS_med)),]
   quants_mean <- quants[which(is.na(quants$LOS_med)),]
+
   # optimise the fit to dweibull for each input set
   weibull_all <- apply(quants_iqr,1, function(x) optimise_quantiles(init_values = init_values, 
                                                                  dist_x = x))
@@ -66,10 +67,15 @@ create_dist_weibull_discrete <- function(quants, sizes, sample_size=10000, init_
   # print the errors to alert the user if the errors are very big
   print(weibull_errors)
   
+  if(dim(quants_mean)[1] >0){
   # calculate the weibull paraamters from the mean and sds 
   weibull_means <- apply(quants_mean,1, function(x) weibull_mean(x))
   #TODO add to the weibull_all list
-  all_dists <- cbind(weibull_means, weibull_pars)
+  all_dists <- cbind(weibull_means, weibull_pars) } else {
+    all_dists <- weibull_pars
+    rownames(all_dists) <- c("shape", "scale", "N")
+  }
+
   #create discrete functions for each distribution
   dis_weibulls <- lapply(all_dists, function(x) discrete_dist(x)) 
   # calculate the propotional sample sizes
@@ -95,7 +101,7 @@ discrete_dist <- function(weibull_pars){
 
   dist_weibull <- distcrete(name = "weibull",
                             interval = 1, 
-                            w = 0.05,
+                            w = 0.5,
                             shape = weibull_pars[1], 
                             scale = weibull_pars[2]) 
 
@@ -108,3 +114,25 @@ format_pars <- function(input_list){
   return(pars)
 }
 
+
+
+####### PLOTS ######ß
+
+plot_hist <- function(icu_china, icu_world, general_china, general_world){
+
+  icu_china <- data.frame(samples =icu_china, location = "China", type = "ICU")
+  icu_world <- data.frame(samples =icu_world, location = "World", type = "ICU")
+  general_china <- data.frame(samples =general_china, location = "China", type = "General")
+  general_world <- data.frame(samples =general_world, location = "World", type = "General")
+
+  
+  all_samples <- rbind(icu_china, icu_world, general_china, general_world)
+
+  HIST_PLOT <- ggplot(all_samples, aes(x=samples)) + 
+    geom_histogram(bins=30)+ 
+    facet_grid(location~type) + theme_bw() + 
+    scale_x_continuous(breaks = seq(0, 65, by = 5))
+  
+  return(HIST_PLOT)
+  
+}
