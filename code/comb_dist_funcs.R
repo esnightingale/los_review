@@ -134,8 +134,8 @@ plot_hist <- function(icu_china, icu_world, general_china, general_world){
     geom_histogram(bins=61)+ 
     facet_grid(location~type) + theme_bw() + 
     scale_x_continuous(breaks = seq(0, 60, by = 5), limits=c(0,60)) + 
-    labs(x ="Length of Stay (days)", y="Counts") +
-    geom_vline(aes(xintercept = z), vline_data, colour = "black", linetype= "dashed")
+    labs(x ="Length of Stay (days)", y="Counts") #+
+   # geom_vline(aes(xintercept = z), vline_data, colour = "black", linetype= "dashed")
   
   return(HIST_PLOT)
   
