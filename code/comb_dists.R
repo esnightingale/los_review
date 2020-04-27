@@ -2,14 +2,15 @@
 # propotionaly based on the data set size. 
 
 # Load in the functions
+setwd("~/Documents/GitHub/los_review/code/")
 source("comb_dist_funcs.R")
 source("comb_dist_data.R")
 ###### INPUT ######
 
 # interquatile range. Can change to something else but have to do equivalent in qunatiles
 iqr <- c(0.25,0.5,0.75)
-sample_size <- 10000000
-set.seed(642)
+sample_size <- 100000
+set.seed(643)
 
 # Run the function to create the overall distribution.
 # init_values for the fitting must be in right area to get a good fit.
@@ -89,6 +90,15 @@ pdf("histograms.pdf")
 HIST_PLOT
 
 dev.off()
+
+quants_china_general <- quantile(all_samples_general_china,
+                                 probs=iqr)
+quants_china_icu <- quantile(all_samples_icu_china,
+                                 probs=iqr)
+quants_world_general <- quantile(all_samples_general_world,
+                                 probs=iqr)
+quants_world_icu <- quantile(all_samples_icu_world,
+                                 probs=iqr)
 
 ###### FIT OVERALL DISTRIBUTION ####### - doesn't work, probably because of 0s
 #dweibull_overall <- estdweibull(all_samples_general)
