@@ -5,7 +5,7 @@ setwd("~/Documents/GitHub/los_review/data/")
 dat <- read.csv("LOS analysis dataset - Sheet1.csv")
 
 # Extract relevant columns
-sub_dat <- dat[which(dat$plot_cat== "main"),c("Included","Author" ,"los_group", "End.point", "Country", "plot_cat", "N", "LOS_med", "LOS_q25", "LOS_q75", 
+sub_dat <- dat[which(dat$plot_cat== "main"),c("Included","Author", "All.patients.discharged..dead." ,"los_group", "End.point", "Country", "plot_cat", "N", "LOS_med", "LOS_q25", "LOS_q75", 
                   "LOS_mean", "LOS_sd", "LOS_ICU_med", "LOS_ICU_q25", "LOS_ICU_q75", "LOS_ICU_mean",
                   "LOS_ICU_sd")]
 
@@ -56,10 +56,19 @@ write.csv(los_general, "Included_general.csv")
 write.csv(los_icu, "Included_icu.csv")
 
 #subset number parameters
-los_general <- los_general[,general_parameters]
-los_general_china <- los_general_china[,general_parameters]
-los_general_world <- los_general_world[,general_parameters]
-los_icu <- los_icu[,icu_parameters]
-los_icu_china <- los_icu_china[,icu_parameters]
-los_icu_world <- los_icu_world[,icu_parameters]
+los_general_s <- los_general[,general_parameters]
+los_general_china_s <- los_general_china[,general_parameters]
+los_general_world_s <- los_general_world[,general_parameters]
+los_icu_s <- los_icu[,icu_parameters]
+los_icu_china_s <- los_icu_china[,icu_parameters]
+los_icu_world_s <- los_icu_world[,icu_parameters]
+
+# subset general by completed follow up or not
+
+los_general_china_complete <- los_general_china[which(los_general_china$All.patients.discharged..dead. == "Yes"),]
+los_general_china_ongoing <- los_general_china[which(los_general_china$All.patients.discharged..dead. == "No"),]
+los_general_china_complete_s <- los_general_china_complete[,general_parameters]
+los_general_china_ongoing_s <- los_general_china[,general_parameters]
+
+
 

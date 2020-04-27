@@ -10,6 +10,7 @@ library(tidyr)
 library(dplyr)
 library(DiscreteWeibull)
 library(mixdist)
+library(data.table)
 
 ######### FIT IQR'S ########
 
@@ -64,8 +65,8 @@ create_dist_weibull_discrete <- function(quants, sizes, sample_size=10000, init_
   weibull_pars <-   lapply(weibull_all, function(x) format_pars(x))
   weibull_pars <- data.frame(matrix(unlist(weibull_pars), ncol=length(weibull_pars), byrow=F))
   weibull_errors <- lapply(weibull_all, function(x) x[[2]])
+  weibull_errors <- unlist(weibull_errors)
   # print the errors to alert the user if the errors are very big
-  print(weibull_errors)
   
   if(dim(quants_mean)[1] >0){
   # calculate the weibull paraamters from the mean and sds 
@@ -89,7 +90,7 @@ create_dist_weibull_discrete <- function(quants, sizes, sample_size=10000, init_
     subset_samples <- dis_weibulls[[i]]$r(n = all_dists["samples_taken",i])
     all_samples <- c(all_samples, subset_samples)
   }
-  return(list(all_samples, weibull_pars))
+  return(list(samples = all_samples, parameters = weibull_pars, errors = weibull_errors))
 }
 
 
@@ -117,7 +118,7 @@ format_pars <- function(input_list){
 
 ####### PLOTS ######ß
 
-plot_hist <- function(icu_china, icu_world, general_china, general_world){
+plot_hist_1 <- function(icu_china, icu_world, general_china, general_world){
 
   icu_china <- data.frame(samples =icu_china, location = "China", type = "ICU")
   icu_world <- data.frame(samples =icu_world, location = "Rest of World", type = "ICU")
@@ -130,12 +131,31 @@ plot_hist <- function(icu_china, icu_world, general_china, general_world){
     group_by(location,type) %>%
   summarize(z=median(samples))
 
-  HIST_PLOT <- ggplot(all_samples, aes(x=samples, fill = location)) + 
+  HIST_PLOT <- ggplot(all_samples, aes(x=samples)) + 
     geom_histogram(bins=61)+ 
     facet_grid(location~type) + theme_bw() + 
     scale_x_continuous(breaks = seq(0, 60, by = 5), limits=c(0,60)) + 
     labs(x ="Length of Stay (days)", y="Counts") #+
    # geom_vline(aes(xintercept = z), vline_data, colour = "black", linetype= "dashed")
+  
+  return(HIST_PLOT)
+  
+}
+
+plot_hist_2 <- function(china_ongoing, china_complete){
+  
+  china_ongoing <- data.frame(samples =china_ongoing, type = "Ongoing")
+  china_complete <- data.frame(samples =china_complete, type = "Complete")
+
+  
+  all_samples <- rbind(china_ongoing, china_complete)
+  
+  
+  HIST_PLOT <- ggplot(all_samples, aes(x=samples)) + 
+    geom_histogram(bins=61)+ 
+    facet_grid(~type) + theme_bw() + 
+    scale_x_continuous(breaks = seq(0, 60, by = 5), limits=c(0,60)) + 
+    labs(x ="Length of Stay (days)", y="Counts")
   
   return(HIST_PLOT)
   
