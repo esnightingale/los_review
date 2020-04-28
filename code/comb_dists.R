@@ -135,23 +135,27 @@ sum(weibull_errors_general_china)
 general_samples_china_2 <- create_dist_weibull_discrete(los_general_china_s,
                                                       sizes, 
                                                       sample_size = sample_size, 
-                                                      init_values = c(3,27))
+                                                      init_values = c(3,27), 
+                                                      weighting = F)
 
 general_samples_world_2 <- create_dist_weibull_discrete(los_general_world_s,
                                                       sizes, 
                                                       sample_size = sample_size, 
-                                                      init_values = c(3,27))
+                                                      init_values = c(3,27), 
+                                                      weighting = F)
 
 
 icu_samples_china_2 <- create_dist_weibull_discrete(los_icu_china_s,
                                                   sizes, 
                                                   sample_size = sample_size, 
-                                                  init_values = c(3,27))
+                                                  init_values = c(3,27), 
+                                                  weighting = F)
 
 icu_samples_world_2 <- create_dist_weibull_discrete(los_icu_world_s,
                                                   sizes, 
                                                   sample_size = sample_size, 
-                                                  init_values = c(3,27))
+                                                  init_values = c(3,27), 
+                                                  weighting = F)
 
 HIST_PLOT_NoWeight <- plot_hist_1(icu_china = icu_samples_china_2[["samples"]], 
                          icu_world = icu_samples_world_2[["samples"]], 
