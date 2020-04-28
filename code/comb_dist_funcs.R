@@ -27,6 +27,18 @@ min_quantiles <- function(theta, dist_x, iqr = c(0.25,0.5,0.75)){
   return(optim_value)
 }
 
+# calculate the difference between quantiles and gamma output for theta
+min_quantiles_gamma <- function(theta, dist_x, iqr = c(0.25,0.5,0.75)){
+  #calculate quantiles with test parameters
+  test_quantiles <- pgamma(q = dist_x, shape = theta[1], scale = theta[2])
+  actual_quantiles <- iqr
+  # calculate difference between actualy quantiles and tested quantiles
+  diff_quantiles <- test_quantiles - actual_quantiles
+  # make it absolute
+  optim_value <- sum(diff_quantiles^2)
+  return(optim_value)
+}
+
 # optimising wrapper over the min_quantiles function - weibull
 optimise_quantiles <- function(init_values, dist_x, iqr = c(0.25,0.5,0.75)){
   #optimise the min_quantiles function. 
@@ -35,6 +47,20 @@ optimise_quantiles <- function(init_values, dist_x, iqr = c(0.25,0.5,0.75)){
         fn = min_quantiles,
         dist_x = c(dist_x[c("LOS_q25", "LOS_med", "LOS_q75")]),
         iqr=iqr))
+  
+  par_out <- c(par_out, dist_x["N"])
+  
+  return(par_out)
+}
+
+# optimising wrapper over the min_quantiles function - weibull
+optimise_quantiles_gamma <- function(init_values, dist_x, iqr = c(0.25,0.5,0.75)){
+  #optimise the min_quantiles function. 
+  #suppressWarnings so don't get message about trying values that don't work
+  par_out <- suppressWarnings(optim(par = c(init_values[1], init_values[2]),
+                                    fn = min_quantiles_gamma,
+                                    dist_x = c(dist_x[c("LOS_q25", "LOS_med", "LOS_q75")]),
+                                    iqr=iqr))
   
   par_out <- c(par_out, dist_x["N"])
   
@@ -52,8 +78,24 @@ weibull_mean <- function(input){
 
 ######### OVERALL WRAPPER ######
 
+errors_gamma <-function(quants, sizes, sample_size=10000, init_values){
+  # for subset that contains medians
+  quants_iqr <- quants[which(!is.na(quants$LOS_med)),]
+  quants_mean <- quants[which(is.na(quants$LOS_med)),]
+  
+  # optimise the fit to dweibull for each input set
+  gamma_all <- apply(quants_iqr,1, function(x) optimise_quantiles_gamma(init_values = init_values, 
+                                                                    dist_x = x))
+  # save the parameters and errors
+  gamma_errors <- lapply(gamma_all, function(x) x[[2]])
+  gamma_errors <- unlist(gamma_errors)
+  return(gamma_errors)
+}
+
+
 #calculate the overall sample
-create_dist_weibull_discrete <- function(quants, sizes, sample_size=10000, init_values){
+create_dist_weibull_discrete <- function(quants, sizes, sample_size=10000, init_values,
+                                         weighting = TRUE){
   # for subset that contains medians
   quants_iqr <- quants[which(!is.na(quants$LOS_med)),]
   quants_mean <- quants[which(is.na(quants$LOS_med)),]
@@ -80,7 +122,10 @@ create_dist_weibull_discrete <- function(quants, sizes, sample_size=10000, init_
   #create discrete functions for each distribution
   dis_weibulls <- lapply(all_dists, function(x) discrete_dist(x)) 
   # calculate the propotional sample sizes
+  if (weighting == T){
   all_dists["prop_samples",] <- sapply(all_dists["N",], function(x) x/sum(all_dists["N",]))
+  } else{ 
+    all_dists["prop_samples",] <- sapply(all_dists["N",], function(x) 1/dim(all_dists)[2])}
   # sample from multinomial to determine how many targets to include
   all_dists["samples_taken",] <- rmultinom(n = 1, size = sample_size, prob = all_dists["prop_samples",])
   # sample from the overall distributions

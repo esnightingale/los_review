@@ -71,10 +71,8 @@ china_icu_over_60 <- sum(icu_samples_china[["samples"]] > 60) /
   length(icu_samples_china[["samples"]])*100
 world_icu_over_60 <- sum(icu_samples_world[["samples"]] > 60) /
   length(icu_samples_world[["samples"]])*100
-world_general_over_60 <- sum(general_samples_world[["samples"]] > 60) /
+  world_general_over_60 <- sum(general_samples_world[["samples"]] > 60) /
   length(general_samples_world[["samples"]])*100
-
-
 
 
 ####### COMPARE COMPLETE VS ONGOING STUDIES #######
@@ -107,20 +105,72 @@ china_ongoing_over_60 <- sum(general_samples_china_ongoing[["samples"]] > 60) /
   length(general_samples_china_ongoing[["samples"]])*100
 
 
+# ###### CALCULATE ERRRORS ####### 
+
+#Extract errors from weibull (general, china)
+weibull_errors <- general_samples_china[["errors"]]
+# Calculate equivalent gamma errors
+ gamma_errors <-  errors_gamma(los_general_china_s,
+                                               sizes, 
+                                               sample_size = sample_size, 
+                                               init_values = c(3,27))
+ # combine the errors into a dataframe
+ all_errors <- data.frame(errors = c(weibull_errors, gamma_errors), 
+                          type = c(rep("weibull", length(weibull_errors)), 
+                                   rep("gamma", length(gamma_errors))))
+ # save error plot
+pdf("error_plot.pdf") 
+ERROR_PLOT <- ggplot(all_errors, aes(x=errors)) +
+  geom_histogram(bins=10) +
+  facet_grid(~type) + theme_bw() 
+dev.off()
+# Total error in each case
+sum(gamma_errors_general_china)
+sum(weibull_errors_general_china)
+
+
+########## General analysis - no weightings ########
+
+#printed values describe error in fit. Ideally less than 0.001
+general_samples_china_2 <- create_dist_weibull_discrete(los_general_china_s,
+                                                      sizes, 
+                                                      sample_size = sample_size, 
+                                                      init_values = c(3,27))
+
+general_samples_world_2 <- create_dist_weibull_discrete(los_general_world_s,
+                                                      sizes, 
+                                                      sample_size = sample_size, 
+                                                      init_values = c(3,27))
+
+
+icu_samples_china_2 <- create_dist_weibull_discrete(los_icu_china_s,
+                                                  sizes, 
+                                                  sample_size = sample_size, 
+                                                  init_values = c(3,27))
+
+icu_samples_world_2 <- create_dist_weibull_discrete(los_icu_world_s,
+                                                  sizes, 
+                                                  sample_size = sample_size, 
+                                                  init_values = c(3,27))
+
+HIST_PLOT_NoWeight <- plot_hist_1(icu_china = icu_samples_china_2[["samples"]], 
+                         icu_world = icu_samples_world_2[["samples"]], 
+                         general_china = general_samples_china_2[["samples"]],
+                         general_world = general_samples_world_2[["samples"]])
+
+pdf("histograms_no_weight.pdf")
+HIST_PLOT_NoWeight
+dev.off()
+
+#quantiles
+quants_china_general_2 <- quantile(general_samples_china_2[["samples"]], probs=iqr)
+quants_china_icu_2 <- quantile(icu_samples_china_2[["samples"]], probs=iqr)
+quants_world_general_2 <- quantile(general_samples_world_2[["samples"]],  probs=iqr)
+quants_world_icu_2 <- quantile(icu_samples_world_2[["samples"]],probs=iqr)
 
 
 
-# length_needed <- length(gamma_errors_general_china)
-# combined_errors <- data_frame( values = c(gamma_errors_general_china, 
-#                                           weibull_errors_general_china), 
-#                               type =  c(rep("gamma", length_needed), rep("weibull", length_needed)))
-# 
-# ###### FIT OVERALL DISTRIBUTION ####### - doesn't work, probably because of 0s
-# #dweibull_overall <- estdweibull(all_samples_general)
-# HIST_PLOT <- ggplot(combined_errors, aes(x=values)) + 
-#   geom_histogram(bins=33)+ 
-#   facet_grid(~type) + theme_bw() #+ 
-#  # labs(x ="Length of Stay (days)", y="Counts") #+
-# # geom_vline(aes(xintercept = z), vline_data, colour = "black", linetype= "dashed")
-# sum(gamma_errors_general_china)
-# sum(weibull_errors_general_china)
+
+
+
+
