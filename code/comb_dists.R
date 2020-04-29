@@ -125,8 +125,8 @@ ERROR_PLOT <- ggplot(all_errors, aes(x=errors)) +
   facet_grid(~type) + theme_bw() 
 dev.off()
 # Total error in each case
-sum(gamma_errors_general_china)
-sum(weibull_errors_general_china)
+sum(gamma_errors)
+sum(weibull_errors)
 
 
 ########## General analysis - no weightings ########
@@ -173,8 +173,41 @@ quants_world_general_2 <- quantile(general_samples_world_2[["samples"]],  probs=
 quants_world_icu_2 <- quantile(icu_samples_world_2[["samples"]],probs=iqr)
 
 
+#### Compare weighted vs non_weighted
+
+icu_china_w <- data.frame(samples =icu_samples_china[["samples"]], location = "China", type = "ICU", weighted = "yes")
+icu_world_w <- data.frame(samples =icu_samples_world[["samples"]], location = "Rest of World", type = "ICU", weighted = "yes")
+general_china_w <- data.frame(samples =general_samples_china[["samples"]], location = "China", type = "General", weighted = "yes")
+general_world_w <- data.frame(samples =general_samples_world[["samples"]], location = "Rest of World", type = "General", weighted = "yes")
+
+icu_china_nw <- data.frame(samples =icu_samples_china_2[["samples"]], location = "China", type = "ICU", weighted = "no")
+icu_world_nw <- data.frame(samples =icu_samples_world_2[["samples"]], location = "Rest of World", type = "ICU", weighted = "no")
+general_china_nw <- data.frame(samples =general_samples_china_2[["samples"]], location = "China", type = "General", weighted = "no")
+general_world_nw <- data.frame(samples =general_samples_world_2[["samples"]], location = "Rest of World", type = "General", weighted = "no")
+
+all_samples <- rbind(icu_china_w, icu_world_w, general_china_w, general_world_w,
+                     icu_china_nw, icu_world_nw, general_china_nw, general_world_nw)
+all_samples_weighted <- rbind(icu_china_w, icu_world_w, general_china_w, general_world_w)
+all_samples_unweighted <- rbind(icu_china_nw, icu_world_nw, general_china_nw, general_world_nw)
 
 
 
+COMPARISON_PLOT <- ggplot(all_samples_weighted, aes(x=samples), colour = "darkgrey", 
+                          fill = "darkgrey") + 
+  geom_histogram(bins=61)+ 
+  facet_grid(location~type) + theme_bw() + 
+  scale_x_continuous(breaks = seq(0, 60, by = 5), limits=c(0,60)) + 
+  labs(x ="Length of Stay (days)", y="Counts") +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank()) +
+  geom_histogram(data=all_samples_unweighted,bins=61,aes(x=samples, alpha =0.1), 
+                 fill = "#FF6B94", alpha= 0.6) + 
+  scale_colour_manual(values= alpha(c("#FF6B94"), 0.6))
+COMPARISON_PLOT
+
+pdf("Comparison_weighted.pdf")
+COMPARISON_PLOT
+dev.off()
 
 
