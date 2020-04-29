@@ -1,2 +1,2 @@
-# los_review
-Code used to produce the results presented in "A rapid review and synthesis of evidence for hospital length of stay of COVID-19 patients"
+# COVID-19 length of hospital stay
+Code used to produce the results presented in "COVID-19 length of hospital stay: a systematic review and data synthesis"
