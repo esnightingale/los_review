@@ -1,7 +1,6 @@
 #Functions for combining_distributions.R
 
 #devtools::install_github("reconhub/distcrete")
-
 library(ggplot2)
 library(gridExtra)
 library(distcrete)

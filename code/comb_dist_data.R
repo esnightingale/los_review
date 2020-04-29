@@ -64,7 +64,6 @@ los_icu_china_s <- los_icu_china[,icu_parameters]
 los_icu_world_s <- los_icu_world[,icu_parameters]
 
 # subset general by completed follow up or not
-
 los_general_china_complete <- los_general_china[which(los_general_china$All.patients.discharged..dead. == "Yes"),]
 los_general_china_ongoing <- los_general_china[which(los_general_china$All.patients.discharged..dead. == "No"),]
 los_general_china_complete_s <- los_general_china_complete[,general_parameters]

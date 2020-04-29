@@ -1,28 +1,39 @@
-# Fits a weibull distribution to the iqr range for each input set, then samples them
-# propotionaly based on the data set size. 
-# Run the function to create the overall distribution.
+################################################################################
+# Analysis of hospital length of stay with COVID-19
+# Author: Naomi R Waterlow
+# Date: 2020-04-29
+################################################################################
+#
+# This script performs the analysis of estimation of LOS
+# 
+################################################################################
+################################################################################
+
 # init_values for the fitting must be in right area to get a good fit.
 # sample_size is for sampling th overall distribution at the end.
 
-# Load in the functions
+
 setwd("~/Documents/GitHub/los_review/code/")
+# Load the functions
 source("comb_dist_funcs.R")
+#Load and format the data
 source("comb_dist_data.R")
+
 ###### INPUT ######
 
 # interquatile range. Can change to something else but have to do equivalent in qunatiles
 iqr <- c(0.25,0.5,0.75)
-sample_size <- 100000
+sample_size <- 100000 # sample_size is for sampling th overall, combined distribution
 set.seed(643)
 
 ####### GENERAL ########
 
-#printed values describe error in fit. Ideally less than 0.001
+# run the function to create an overall distribution for los in China, General Hopsital
 general_samples_china <- create_dist_weibull_discrete(los_general_china_s,
                                                         sizes, 
                                                         sample_size = sample_size, 
                                                         init_values = c(3,27))
-
+# for los in rest of world, General Hopsital
 general_samples_world <- create_dist_weibull_discrete(los_general_world_s,
                                                       sizes, 
                                                       sample_size = sample_size, 
@@ -31,17 +42,18 @@ general_samples_world <- create_dist_weibull_discrete(los_general_world_s,
 
 ######## ICU ######
 
-#printed values describe error in fit. Ideally less than 0.001
+# rename columns so can use the amin function
 colnames(los_icu_s) <- c("N", "LOS_med", "LOS_q25", "LOS_q75", "LOS_mean", "LOS_sd")
 colnames(los_icu_china_s) <- c("N", "LOS_med", "LOS_q25", "LOS_q75", "LOS_mean", "LOS_sd")
 colnames(los_icu_world_s) <- c("N", "LOS_med", "LOS_q25", "LOS_q75", "LOS_mean", "LOS_sd")
 
-
+# Get samples for ICU china
 icu_samples_china <- create_dist_weibull_discrete(los_icu_china_s,
                                                 sizes, 
                                                 sample_size = sample_size, 
                                                 init_values = c(3,27))
 
+# Get samples for ICU rest of the world
 icu_samples_world <- create_dist_weibull_discrete(los_icu_world_s,
                                                   sizes, 
                                                   sample_size = sample_size, 
@@ -50,6 +62,7 @@ icu_samples_world <- create_dist_weibull_discrete(los_icu_world_s,
 
 ##### CREATE SUMMARY ANALYSIS #######
 
+# Create a histogram for the different sub_groups
 HIST_PLOT <- plot_hist_1(icu_china = icu_samples_china[["samples"]], 
                        icu_world = icu_samples_world[["samples"]], 
                        general_china = general_samples_china[["samples"]],
@@ -59,12 +72,13 @@ pdf("histograms.pdf")
 HIST_PLOT
 dev.off()
 
-#quantiles
+# Calcualte the quantiles for each subgroup
 quants_china_general <- quantile(general_samples_china[["samples"]], probs=iqr)
 quants_china_icu <- quantile(icu_samples_china[["samples"]], probs=iqr)
 quants_world_general <- quantile(general_samples_world[["samples"]],  probs=iqr)
 quants_world_icu <- quantile(icu_samples_world[["samples"]],probs=iqr)
 
+# View the % of samples that fall above the 60 xaxis cut off
 china_general_over_60 <- sum(general_samples_china[["samples"]] > 60) /
   length(general_samples_china[["samples"]])*100
 china_icu_over_60 <- sum(icu_samples_china[["samples"]] > 60) /
@@ -77,13 +91,13 @@ world_icu_over_60 <- sum(icu_samples_world[["samples"]] > 60) /
 
 ####### COMPARE COMPLETE VS ONGOING STUDIES #######
 
-#printed values describe error in fit. Ideally less than 0.001
+# Generate samples only from distributions from studies where not everonye has been discharged
 general_samples_china_ongoing <- create_dist_weibull_discrete(los_general_china_ongoing_s,
                                                       sizes, 
                                                       sample_size = sample_size, 
                                                       init_values = c(3,27))
 
-#printed values describe error in fit. Ideally less than 0.001
+# Generate samples only from distributions from studies where everyone has been discharge
 general_samples_china_complete <- create_dist_weibull_discrete(los_general_china_complete_s,
                                                               sizes, 
                                                               sample_size = sample_size, 
@@ -107,7 +121,7 @@ china_ongoing_over_60 <- sum(general_samples_china_ongoing[["samples"]] > 60) /
 
 # ###### CALCULATE ERRRORS ####### 
 
-#Extract errors from weibull (general, china)
+# Extract errors from weibull (general, china)
 weibull_errors <- general_samples_china[["errors"]]
 # Calculate equivalent gamma errors
  gamma_errors <-  errors_gamma(los_general_china_s,
@@ -131,7 +145,7 @@ sum(weibull_errors)
 
 ########## General analysis - no weightings ########
 
-#printed values describe error in fit. Ideally less than 0.001
+#Rerun all the sample generations but with weighiting = False
 general_samples_china_2 <- create_dist_weibull_discrete(los_general_china_s,
                                                       sizes, 
                                                       sample_size = sample_size, 
@@ -156,7 +170,7 @@ icu_samples_world_2 <- create_dist_weibull_discrete(los_icu_world_s,
                                                   sample_size = sample_size, 
                                                   init_values = c(3,27), 
                                                   weighting = F)
-
+# Create histogram of all the unweighted samplings
 HIST_PLOT_NoWeight <- plot_hist_1(icu_china = icu_samples_china_2[["samples"]], 
                          icu_world = icu_samples_world_2[["samples"]], 
                          general_china = general_samples_china_2[["samples"]],
@@ -166,7 +180,7 @@ pdf("histograms_no_weight.pdf")
 HIST_PLOT_NoWeight
 dev.off()
 
-#quantiles
+# Calcualte the quantiles
 quants_china_general_2 <- quantile(general_samples_china_2[["samples"]], probs=iqr)
 quants_china_icu_2 <- quantile(icu_samples_china_2[["samples"]], probs=iqr)
 quants_world_general_2 <- quantile(general_samples_world_2[["samples"]],  probs=iqr)
@@ -175,6 +189,8 @@ quants_world_icu_2 <- quantile(icu_samples_world_2[["samples"]],probs=iqr)
 
 #### Compare weighted vs non_weighted
 
+
+#Combine into dataframes for plotting
 icu_china_w <- data.frame(samples =icu_samples_china[["samples"]], location = "China", type = "ICU", weighted = "yes")
 icu_world_w <- data.frame(samples =icu_samples_world[["samples"]], location = "Rest of World", type = "ICU", weighted = "yes")
 general_china_w <- data.frame(samples =general_samples_china[["samples"]], location = "China", type = "General", weighted = "yes")
@@ -185,13 +201,10 @@ icu_world_nw <- data.frame(samples =icu_samples_world_2[["samples"]], location =
 general_china_nw <- data.frame(samples =general_samples_china_2[["samples"]], location = "China", type = "General", weighted = "no")
 general_world_nw <- data.frame(samples =general_samples_world_2[["samples"]], location = "Rest of World", type = "General", weighted = "no")
 
-all_samples <- rbind(icu_china_w, icu_world_w, general_china_w, general_world_w,
-                     icu_china_nw, icu_world_nw, general_china_nw, general_world_nw)
 all_samples_weighted <- rbind(icu_china_w, icu_world_w, general_china_w, general_world_w)
 all_samples_unweighted <- rbind(icu_china_nw, icu_world_nw, general_china_nw, general_world_nw)
 
-
-
+# Plot a comparison between samples generated based on weightings and not. 
 COMPARISON_PLOT <- ggplot(all_samples_weighted, aes(x=samples), colour = "darkgrey", 
                           fill = "darkgrey") + 
   geom_histogram(bins=61)+ 
