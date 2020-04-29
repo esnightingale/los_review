@@ -7,13 +7,12 @@ library(viridis)
 pd <- position_dodge(width = 0.5)
 shapes <- c("median" = 15, "median (derived)" = 17, "mean" = 16)
 ltypes <- c("Yes" = "solid", "No" = "dashed")
-status <- c("#56B4E9", "#009E73", "#E69F00")
-severity <- c("#0072B2","#F0E442",  "#CC79A7", "#D55E00")
-palette1 <- c("#9d8EFF","#00A45E","#9E2228","#FF9B91")
-palette2 <- c( "#4379f2",
-               "#00973d",
-               "#e2672c",
-               "#34e9fa")
+# palette1 <- c("#9d8EFF","#00A45E","#9E2228","#FF9B91")
+# palette2 <- c( "#4379f2",
+#                "#00973d",
+#                "#e2672c",
+#                "#34e9fa")
+palette3 <- c("#e5ae2a","#ff6b94", "#595ed4", "#01b96d")
 # pal <- RColorBrewer::brewer.pal(7, "Dark2")
 # status <- pal[1:3]
 # severity <- pal[4:7]
@@ -25,7 +24,7 @@ plot_los_outcome <- function(data,
                              col = "covid_severity", 
                              group = "plot_oth_group", 
                              facet = "Setting",
-                             pal = palette2){
+                             pal = palette3){
   
   if (!is.null(plot_outcome)){
     data <- filter(data, outcome == plot_outcome)
@@ -60,7 +59,10 @@ plot_los_outcome <- function(data,
     # scale_color_viridis(discrete = TRUE, option = "D")+
     scale_shape_manual(values = shapes, drop = F) +
     scale_linetype_manual(values = ltypes, drop = F) +
-    theme_minimal()
+    theme_minimal() +
+    theme(strip.text = element_text(size = 15), 
+          axis.title = element_text(size = 15),
+          panel.spacing = unit(2, "lines"))
   
 }
 
@@ -70,7 +72,7 @@ plot_los_outcome_nofacet <- function(data,
                                      lty = "complete_fup", 
                                      col = "covid_severity", 
                                      group = "plot_oth_group", 
-                                     pal = palette2){
+                                     pal = palette3){
   
   if (!is.null(plot_outcome)){
     data <- filter(data, outcome == plot_outcome)
@@ -97,6 +99,9 @@ plot_los_outcome_nofacet <- function(data,
     # scale_color_viridis(discrete = TRUE, option = "D")+
     scale_shape_manual(values = shapes) +
     scale_linetype_manual(values = ltypes, drop = F) +
-    theme_minimal()
+    theme_minimal()+
+    theme(strip.text = element_text(size = 15), 
+          axis.title = element_text(size = 15),
+          panel.spacing = unit(2, "lines"))
   
 }
