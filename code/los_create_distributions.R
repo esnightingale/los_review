@@ -17,7 +17,9 @@ source("comb_dist_funcs.R")
 source("comb_dist_data.R")
 
 # Create the distribution
-# Input: sample size, location - "China" or "Rest_of_world", hospital = "General" or "ICU"
+# Input: sample size
+#        location - "China" or "Rest_of_world",
+#        hospital = "General" or "ICU"
 # Output: samples - samples taken from desired distribution
 #         parameters - weibull parameters and sample size for each fitted distribution.
 #         errors - the magnittude of error for each fit.
