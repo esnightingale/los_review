@@ -30,12 +30,10 @@ set.seed(643)
 
 # run the function to create an overall distribution for los in China, General Hopsital
 general_samples_china <- create_dist_weibull_discrete(los_general_china_s,
-                                                        sizes, 
                                                         sample_size = sample_size, 
                                                         init_values = c(3,27))
 # for los in rest of world, General Hopsital
 general_samples_world <- create_dist_weibull_discrete(los_general_world_s,
-                                                      sizes, 
                                                       sample_size = sample_size, 
                                                       init_values = c(3,27))
 
@@ -49,13 +47,11 @@ colnames(los_icu_world_s) <- c("N", "LOS_med", "LOS_q25", "LOS_q75", "LOS_mean",
 
 # Get samples for ICU china
 icu_samples_china <- create_dist_weibull_discrete(los_icu_china_s,
-                                                sizes, 
                                                 sample_size = sample_size, 
                                                 init_values = c(3,27))
 
 # Get samples for ICU rest of the world
 icu_samples_world <- create_dist_weibull_discrete(los_icu_world_s,
-                                                  sizes, 
                                                   sample_size = sample_size, 
                                                   init_values = c(3,27))
 
@@ -125,7 +121,6 @@ china_ongoing_over_60 <- sum(general_samples_china_ongoing[["samples"]] > 60) /
 weibull_errors <- general_samples_china[["errors"]]
 # Calculate equivalent gamma errors
  gamma_errors <-  errors_gamma(los_general_china_s,
-                                               sizes, 
                                                sample_size = sample_size, 
                                                init_values = c(3,27))
  # combine the errors into a dataframe
@@ -147,26 +142,22 @@ sum(weibull_errors)
 
 #Rerun all the sample generations but with weighiting = False
 general_samples_china_2 <- create_dist_weibull_discrete(los_general_china_s,
-                                                      sizes, 
                                                       sample_size = sample_size, 
                                                       init_values = c(3,27), 
                                                       weighting = F)
 
 general_samples_world_2 <- create_dist_weibull_discrete(los_general_world_s,
-                                                      sizes, 
                                                       sample_size = sample_size, 
                                                       init_values = c(3,27), 
                                                       weighting = F)
 
 
 icu_samples_china_2 <- create_dist_weibull_discrete(los_icu_china_s,
-                                                  sizes, 
                                                   sample_size = sample_size, 
                                                   init_values = c(3,27), 
                                                   weighting = F)
 
 icu_samples_world_2 <- create_dist_weibull_discrete(los_icu_world_s,
-                                                  sizes, 
                                                   sample_size = sample_size, 
                                                   init_values = c(3,27), 
                                                   weighting = F)
