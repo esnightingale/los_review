@@ -8,6 +8,6 @@ These data are summarised in `code/los_summary.R` to produce the figures include
 
 The extracted estimates are combined into summary distributions using the script `code/comb_dists.R`. A function to sample from the obtained summary distributions for `setting = China/Other` and `type = general/ICU` can be found in `code/los_create_distributions.R`.
 
-## Contributors
+### Contributors
 @esnightingale, @NaomiWaterlow and @erees contributed to this work.
 
