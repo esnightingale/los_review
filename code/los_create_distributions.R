@@ -25,8 +25,8 @@ source("comb_dist_data.R")
 #         errors - the magnittude of error for each fit.
 
 calculated_distribution <- create_own_distribution(sample_size = 100000, 
-                                                location = "China",
-                                                hospital = "General")
+                                                setting = "China",
+                                                type = "General")
 
 #extract the sample size
 distribution_samples <- calculated_distribution[["samples"]]
