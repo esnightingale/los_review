@@ -5,7 +5,7 @@
 ################################################################################
 #
 # This script performs the analysis of estimation of LOS
-# 
+#
 ################################################################################
 ################################################################################
 
@@ -30,11 +30,11 @@ set.seed(643)
 
 # run the function to create an overall distribution for los in China, General Hopsital
 general_samples_china <- create_dist_weibull_discrete(los_general_china_s,
-                                                        sample_size = sample_size, 
+                                                        sample_size = sample_size,
                                                         init_values = c(3,27))
 # for los in rest of world, General Hopsital
 general_samples_world <- create_dist_weibull_discrete(los_general_world_s,
-                                                      sample_size = sample_size, 
+                                                      sample_size = sample_size,
                                                       init_values = c(3,27))
 
 
@@ -47,20 +47,20 @@ colnames(los_icu_world_s) <- c("N", "LOS_med", "LOS_q25", "LOS_q75", "LOS_mean",
 
 # Get samples for ICU china
 icu_samples_china <- create_dist_weibull_discrete(los_icu_china_s,
-                                                sample_size = sample_size, 
+                                                sample_size = sample_size,
                                                 init_values = c(3,27))
 
 # Get samples for ICU rest of the world
 icu_samples_world <- create_dist_weibull_discrete(los_icu_world_s,
-                                                  sample_size = sample_size, 
+                                                  sample_size = sample_size,
                                                   init_values = c(3,27))
 
 
 ##### CREATE SUMMARY ANALYSIS #######
 
 # Create a histogram for the different sub_groups
-HIST_PLOT <- plot_hist_1(icu_china = icu_samples_china[["samples"]], 
-                       icu_world = icu_samples_world[["samples"]], 
+HIST_PLOT <- plot_hist_1(icu_china = icu_samples_china[["samples"]],
+                       icu_world = icu_samples_world[["samples"]],
                        general_china = general_samples_china[["samples"]],
                        general_world = general_samples_world[["samples"]])
 
@@ -89,18 +89,16 @@ world_icu_over_60 <- sum(icu_samples_world[["samples"]] > 60) /
 
 # Generate samples only from distributions from studies where not everonye has been discharged
 general_samples_china_ongoing <- create_dist_weibull_discrete(los_general_china_ongoing_s,
-                                                      sizes, 
-                                                      sample_size = sample_size, 
+                                                      sample_size = sample_size,
                                                       init_values = c(3,27))
 
 # Generate samples only from distributions from studies where everyone has been discharge
 general_samples_china_complete <- create_dist_weibull_discrete(los_general_china_complete_s,
-                                                              sizes, 
-                                                              sample_size = sample_size, 
+                                                              sample_size = sample_size,
                                                               init_values = c(3,27))
 
 
-HIST_PLOT_2 <- plot_hist_2(china_ongoing = general_samples_china_ongoing[["samples"]], 
+HIST_PLOT_2 <- plot_hist_2(china_ongoing = general_samples_china_ongoing[["samples"]],
                          china_complete = general_samples_china_complete[["samples"]])
 
 pdf("histograms_complete.pdf")
@@ -115,23 +113,23 @@ china_ongoing_over_60 <- sum(general_samples_china_ongoing[["samples"]] > 60) /
   length(general_samples_china_ongoing[["samples"]])*100
 
 
-# ###### CALCULATE ERRRORS ####### 
+# ###### CALCULATE ERRRORS #######
 
 # Extract errors from weibull (general, china)
 weibull_errors <- general_samples_china[["errors"]]
 # Calculate equivalent gamma errors
  gamma_errors <-  errors_gamma(los_general_china_s,
-                                               sample_size = sample_size, 
+                                               sample_size = sample_size,
                                                init_values = c(3,27))
  # combine the errors into a dataframe
- all_errors <- data.frame(errors = c(weibull_errors, gamma_errors), 
-                          type = c(rep("weibull", length(weibull_errors)), 
+ all_errors <- data.frame(errors = c(weibull_errors, gamma_errors),
+                          type = c(rep("weibull", length(weibull_errors)),
                                    rep("gamma", length(gamma_errors))))
  # save error plot
-pdf("error_plot.pdf") 
+pdf("error_plot.pdf")
 ERROR_PLOT <- ggplot(all_errors, aes(x=errors)) +
   geom_histogram(bins=10) +
-  facet_grid(~type) + theme_bw() 
+  facet_grid(~type) + theme_bw()
 dev.off()
 # Total error in each case
 sum(gamma_errors)
@@ -142,28 +140,28 @@ sum(weibull_errors)
 
 #Rerun all the sample generations but with weighiting = False
 general_samples_china_2 <- create_dist_weibull_discrete(los_general_china_s,
-                                                      sample_size = sample_size, 
-                                                      init_values = c(3,27), 
+                                                      sample_size = sample_size,
+                                                      init_values = c(3,27),
                                                       weighting = F)
 
 general_samples_world_2 <- create_dist_weibull_discrete(los_general_world_s,
-                                                      sample_size = sample_size, 
-                                                      init_values = c(3,27), 
+                                                      sample_size = sample_size,
+                                                      init_values = c(3,27),
                                                       weighting = F)
 
 
 icu_samples_china_2 <- create_dist_weibull_discrete(los_icu_china_s,
-                                                  sample_size = sample_size, 
-                                                  init_values = c(3,27), 
+                                                  sample_size = sample_size,
+                                                  init_values = c(3,27),
                                                   weighting = F)
 
 icu_samples_world_2 <- create_dist_weibull_discrete(los_icu_world_s,
-                                                  sample_size = sample_size, 
-                                                  init_values = c(3,27), 
+                                                  sample_size = sample_size,
+                                                  init_values = c(3,27),
                                                   weighting = F)
 # Create histogram of all the unweighted samplings
-HIST_PLOT_NoWeight <- plot_hist_1(icu_china = icu_samples_china_2[["samples"]], 
-                         icu_world = icu_samples_world_2[["samples"]], 
+HIST_PLOT_NoWeight <- plot_hist_1(icu_china = icu_samples_china_2[["samples"]],
+                         icu_world = icu_samples_world_2[["samples"]],
                          general_china = general_samples_china_2[["samples"]],
                          general_world = general_samples_world_2[["samples"]])
 
@@ -195,18 +193,18 @@ general_world_nw <- data.frame(samples =general_samples_world_2[["samples"]], lo
 all_samples_weighted <- rbind(icu_china_w, icu_world_w, general_china_w, general_world_w)
 all_samples_unweighted <- rbind(icu_china_nw, icu_world_nw, general_china_nw, general_world_nw)
 
-# Plot a comparison between samples generated based on weightings and not. 
-COMPARISON_PLOT <- ggplot(all_samples_weighted, aes(x=samples), colour = "darkgrey", 
-                          fill = "darkgrey") + 
-  geom_histogram(bins=61)+ 
-  facet_grid(location~type) + theme_bw() + 
-  scale_x_continuous(breaks = seq(0, 60, by = 5), limits=c(0,60)) + 
+# Plot a comparison between samples generated based on weightings and not.
+COMPARISON_PLOT <- ggplot(all_samples_weighted, aes(x=samples), colour = "darkgrey",
+                          fill = "darkgrey") +
+  geom_histogram(bins=61)+
+  facet_grid(location~type) + theme_bw() +
+  scale_x_continuous(breaks = seq(0, 60, by = 5), limits=c(0,60)) +
   labs(x ="Length of Stay (days)", y="Counts") +
   theme(axis.title.y=element_blank(),
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank()) +
-  geom_histogram(data=all_samples_unweighted,bins=61,aes(x=samples, alpha =0.1), 
-                 fill = "#FF6B94", alpha= 0.6) + 
+  geom_histogram(data=all_samples_unweighted,bins=61,aes(x=samples, alpha =0.1),
+                 fill = "#FF6B94", alpha= 0.6) +
   scale_colour_manual(values= alpha(c("#FF6B94"), 0.6))
 COMPARISON_PLOT
 
@@ -214,4 +212,8 @@ pdf("Comparison_weighted.pdf")
 COMPARISON_PLOT
 dev.off()
 
+write.csv( general_samples_china[["samples"]], "distribution_general_china.csv")
+write.csv( icu_samples_china[["samples"]],"distribution_icu_china.csv")
+write.csv( general_samples_world[["samples"]], "distribution_general_world.csv")
+write.csv(icu_samples_world[["samples"]], "distribution_icu_world.csv" )
 
