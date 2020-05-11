@@ -1,5 +1,5 @@
 library(patchwork)
-library(SDMTools)
+source(here::here("code","SDMtoolsfuns.R"))
 library(viridis)
 
 # ------------------------- Plotting function -------------------------------- #
@@ -43,7 +43,12 @@ plot_los_outcome <- function(data,
   centre_lines <- unique(pull(data, centre))
   
   data %>%
-    ggplot(aes(y = Study, x = LOS_avg, xmin = LOS_q25, xmax = LOS_q75, shape = metric, lty = !!sym(lty), col = !!sym(col), group = !!sym(group))) +
+    ggplot(aes(y = Study, x = LOS_avg, 
+               xmin = LOS_q25, xmax = LOS_q75, 
+               shape = metric, 
+               lty = !!sym(lty), 
+               col = !!sym(col), 
+               group = !!sym(group))) +
     geom_point(aes(size = N), position=pd) +
     geom_errorbarh(height=0.3, position = pd) +
     geom_vline(aes(xintercept = centre), col = "darkgrey", lty = "longdash") +
@@ -62,7 +67,8 @@ plot_los_outcome <- function(data,
     theme_minimal() +
     theme(strip.text = element_text(size = 15), 
           axis.title = element_text(size = 15),
-          panel.spacing = unit(2, "lines"))
+          panel.spacing = unit(2, "lines"),
+          axis.text.y = element_text(hjust = 1))
   
 }
 
