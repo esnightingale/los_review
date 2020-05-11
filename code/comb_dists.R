@@ -12,12 +12,13 @@
 # init_values for the fitting must be in right area to get a good fit.
 # sample_size is for sampling th overall distribution at the end.
 
+library(here)
 
-setwd("~/Documents/GitHub/los_review/code/")
+# setwd("~/Documents/GitHub/los_review/code/")
 # Load the functions
-source("comb_dist_funcs.R")
+source(here::here("code","comb_dist_funcs.R"))
 #Load and format the data
-source("comb_dist_data.R")
+source(here::here("code","comb_dist_data.R"))
 
 ###### INPUT ######
 
@@ -64,7 +65,7 @@ HIST_PLOT <- plot_hist_1(icu_china = icu_samples_china[["samples"]],
                        general_china = general_samples_china[["samples"]],
                        general_world = general_samples_world[["samples"]])
 
-pdf("histograms.pdf")
+pdf(here::here("figures","histograms.pdf"))
 HIST_PLOT
 dev.off()
 
@@ -101,7 +102,7 @@ general_samples_china_complete <- create_dist_weibull_discrete(los_general_china
 HIST_PLOT_2 <- plot_hist_2(china_ongoing = general_samples_china_ongoing[["samples"]],
                          china_complete = general_samples_china_complete[["samples"]])
 
-pdf("histograms_complete.pdf")
+pdf(here::here("figures","histograms_complete.pdf"))
 HIST_PLOT_2
 dev.off()
 
@@ -125,11 +126,13 @@ weibull_errors <- general_samples_china[["errors"]]
  all_errors <- data.frame(errors = c(weibull_errors, gamma_errors),
                           type = c(rep("weibull", length(weibull_errors)),
                                    rep("gamma", length(gamma_errors))))
- # save error plot
-pdf("error_plot.pdf")
 ERROR_PLOT <- ggplot(all_errors, aes(x=errors)) +
-  geom_histogram(bins=10) +
-  facet_grid(~type) + theme_bw()
+   geom_histogram(bins=10) +
+   facet_grid(~type) + theme_bw()
+
+ # save error plot
+pdf(here::here("figures","error_plot.pdf"))
+ERROR_PLOT
 dev.off()
 # Total error in each case
 sum(gamma_errors)
@@ -165,7 +168,7 @@ HIST_PLOT_NoWeight <- plot_hist_1(icu_china = icu_samples_china_2[["samples"]],
                          general_china = general_samples_china_2[["samples"]],
                          general_world = general_samples_world_2[["samples"]])
 
-pdf("histograms_no_weight.pdf")
+pdf(here::here("figures","histograms_no_weight.pdf"))
 HIST_PLOT_NoWeight
 dev.off()
 
@@ -208,7 +211,7 @@ COMPARISON_PLOT <- ggplot(all_samples_weighted, aes(x=samples), colour = "darkgr
   scale_colour_manual(values= alpha(c("#FF6B94"), 0.6))
 COMPARISON_PLOT
 
-pdf("Comparison_weighted.pdf")
+pdf(here::here("figures","Comparison_weighted.pdf"))
 COMPARISON_PLOT
 dev.off()
 

@@ -18,13 +18,13 @@
 library(tidyverse)
 library(linelist)
 
-source("~/COVID-19/los_review/code/plot_function.R")
+source(here::here("code","plot_function.R"))
 
 # ---------------------------------------------------------------------------- #
 # Data set up
 # ---------------------------------------------------------------------------- #
 
-dat <- read.csv("~/COVID-19/los_review/data/analysis_dataset_updated.csv")
+dat <- read.csv(here::here("data","LOS analysis dataset - Sheet1.csv"))
 # names(dat)
 
 
@@ -178,12 +178,12 @@ los_gen %>%
 
 # Figure 2: main estimates from each study for general LOS, by discharge status. 
 # (i.e. excluding specific severity/comorbidity/treatment subgroups).
-# png(filename = "~/COVID-19/los_review/figures/fig2_outcomes_bysetting.png", height = 1800, width = 1500, res = 150)
+png(filename = here::here("figures","fig2_outcomes_bysetting.png"), height = 1800, width = 1500, res = 150)
 main %>%
   plot_los_outcome(col = "outcome") +  
   labs(col = "Discharge status", 
        title = "Length of stay in hospital, by discharge status") 
-# dev.off()
+dev.off()
 
 
 # Supplementary figure: Ordered by median age
@@ -197,24 +197,24 @@ main %>%
 by_age$Study[by_age$age_specific_for_group == "N"] <- paste0(by_age$Study[by_age$age_specific_for_group == "N"],"*")
 
 
-# png(filename = "~/COVID-19/los_review/figures/fig2b_all_outcomes_bymedage.png", height = 1500, width = 1500, res = 150)
+png(filename = here::here("figures","fig2b_all_outcomes_bymedage.png"), height = 1500, width = 1500, res = 150)
 by_age %>%
   mutate(Study = as.factor(Study)) %>%
   plot_los_outcome_nofacet(order = "avg_age", col = "outcome") +
   labs(col = "Discharge status", 
        title = "Length of stay in hospital, by discharge status",
        subtitle = "Studies ordered by average participant age (given on the vertical axis)")
-# dev.off()
+dev.off()
 
 # Supplementary figure: General/ICU LOS estimates, where reported for specific 
 # disease severity subgroups.
-# png(filename = "~/COVID-19/los_review/figures/figSup_all_outcomes_byseverity.png", height = 1300, width = 1500, res = 150)
+png(filename = here::here("figures","figSup_all_outcomes_byseverity.png"), height = 1300, width = 1500, res = 150)
 los_gen %>%
   filter(grouped_by_severity == "Y" & trt_group == "" & covid_severity != "All") %>%
   plot_los_outcome_nofacet(plot_outcome = NULL, col = "covid_severity", group = "covid_severity") +
   labs(col = "Disease severity",
        title = "Length of stay in hospital, by study-specified disease severity")
-# dev.off()
+dev.off()
 
 
 
@@ -235,12 +235,12 @@ for (i in 1:nrow(los_icu)){
 
 # Figure 3: main estimates from each study for ICU LOS, by discharge status. 
 # (i.e. excluding specific severity/comorbidity/treatment subgroups).
-# png(filename = "~/COVID-19/los_review/figures/fig3_icu_outcomes_bysetting.png", height = 1000, width = 1500, res = 150)
+png(filename = here::here("figures","fig3_icu_outcomes_bysetting.png"), height = 1000, width = 1500, res = 150)
 los_icu %>%
   filter(trt_group == "") %>%
   plot_los_outcome(plot_outcome = NULL, col = "outcome") +
   facet_grid(rows = vars(Setting), scales = "free_y") + 
   labs(col = "Discharge status",
        title = "Length of stay in ICU, by discharge status")
-# dev.off()
+dev.off()
 

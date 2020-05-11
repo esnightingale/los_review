@@ -211,31 +211,31 @@ plot_hist_2 <- function(china_ongoing, china_complete){
 
 
 #function to create custom distributions
-create_own_distribution <- function(sample_size = 10000, location, hospital, init_values = c(3,27)){
+create_own_distribution <- function(sample_size = 10000, setting, type, init_values = c(3,27)){
 
-  if ( location == "China" && hospital == "General"){
-    # run the function to create an overall distribution for los in China, General Hopsital
+  if ( setting == "China" && type == "General"){
+    # run the function to create an overall distribution for los in China, General LOS
     samples_generated <- create_dist_weibull_discrete(los_general_china_s,
                                                           sample_size = sample_size, 
                                                           init_values = init_values)
   }
   
-  if ( location == "Rest_of_World" & hospital == "General"){
-    # run the function to create an overall distribution for los in China, General Hopsital
+  if ( setting == "Rest_of_World" & type == "General"){
+    # run the function to create an overall distribution for los in China, General LOS
     samples_generated <- create_dist_weibull_discrete(los_general_world_s,
                                                           sample_size = sample_size, 
                                                           init_values = init_values)
   }
   
-  if ( location == "Rest_of_World" & hospital == "ICU"){
-    # run the function to create an overall distribution for los in China, General Hopsital
+  if ( setting == "Rest_of_World" & type == "ICU"){
+    # run the function to create an overall distribution for los in China, ICU LOS
     samples_generated <- create_dist_weibull_discrete(los_icu_world_s,
                                                           sample_size = sample_size, 
                                                           init_values = init_values)
   }
   
-  if ( location == "China" & hospital == "ICU"){
-    # run the function to create an overall distribution for los in China, General Hopsital
+  if ( setting == "China" & type == "ICU"){
+    # run the function to create an overall distribution for los in China, ICU LOS
     samples_generated <- create_dist_weibull_discrete(los_icu_china_s,
                                                           sample_size = sample_size, 
                                                           init_values = init_values)

@@ -10,21 +10,23 @@
 ################################################################################
 ################################################################################
 
-setwd("~/Documents/GitHub/los_review/code/")
+library(here)
+
 # Load the functions
-source("comb_dist_funcs.R")
+source(here::here("code","comb_dist_funcs.R"))
 #Load and format the data
-source("comb_dist_data.R")
+source(here::here("code","comb_dist_data.R"))
 
 # Create the distribution
 # Input: sample size
-#        location - "China" or "Rest_of_world",
-#        hospital = "General" or "ICU"
+#        setting - "China" or "Rest_of_world",
+#        type = "General" or "ICU"
 # Output: samples - samples taken from desired distribution
 #         parameters - weibull parameters and sample size for each fitted distribution.
 #         errors - the magnittude of error for each fit.
 
-calculated_distribution <- create_own_distribution(sample_size = 100000, 
+n <- 100000
+calculated_distribution <- create_own_distribution(sample_size = n, 
                                                 setting = "China",
                                                 type = "General")
 

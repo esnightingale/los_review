@@ -1,8 +1,9 @@
+
 #Read in and subset the data required for assessing the distribution
 
 #read in the data
-setwd("~/Documents/GitHub/los_review/data/")
-dat <- read.csv("LOS analysis dataset - Sheet1.csv")
+
+dat <- read.csv(here::here("data","LOS analysis dataset.csv"))
 
 # Extract relevant columns
 sub_dat <- dat[which(dat$plot_cat== "main"),c("Included","Author", "All.patients.discharged..dead." ,"los_group", "End.point", "Country", "plot_cat", "N", "LOS_med", "LOS_q25", "LOS_q75", 
@@ -52,8 +53,8 @@ los_icu_china <- los_icu_china[which(!is.na(los_icu_china$N)),]
 los_icu_world <- los_icu_world[which(!is.na(los_icu_world$N)),]
 
 #save Includedd studies
-write.csv(los_general, "Included_general.csv")
-write.csv(los_icu, "Included_icu.csv")
+write.csv(los_general, here::here("data","Included_general.csv"))
+write.csv(los_icu, here::here("data","Included_icu.csv"))
 
 #subset number parameters
 los_general_s <- los_general[,general_parameters]
