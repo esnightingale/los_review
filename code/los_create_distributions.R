@@ -43,12 +43,14 @@ calculated_distribution <- tidyr::unnest_wider(calculated_distribution, distribu
 
 dplyr::select(calculated_distribution, setting, type, samples) %>%
     tidyr::unnest(samples) %>%
-    dplyr::ungroup %>%
+    dplyr::ungroup(.) %>%
     dplyr::group_by_at(.vars = dplyr::vars(-samples)) %>%
     dplyr::summarise_at(.vars = dplyr::vars(samples),
                         .funs = list(mean = mean,
                                      median = median,
-                                     cv = function(x){sd(x)/mean(x)}))
+                                     cv = function(x){sd(x)/mean(x)},
+                                     q_25 = function(x){quantile(x, 0.25)},
+                                     q_75 = function(x){quantile(x, 0.75)}))
 
 distribution_samples <- 
     dplyr::select(calculated_distribution, setting, type, samples) %>%
