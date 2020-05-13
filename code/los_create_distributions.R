@@ -23,7 +23,7 @@ source(here::here("code","comb_dist_data.R"))
 #        type = "General" or "ICU"
 # Output: samples - samples taken from desired distribution
 #         parameters - weibull parameters and sample size for each fitted distribution.
-#         errors - the magnittude of error for each fit.
+#         errors - the magnitude of error for each fit.
 
 n <- 100000
 
