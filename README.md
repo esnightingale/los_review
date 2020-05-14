@@ -9,5 +9,5 @@ These data are summarised in `code/los_summary.R` to produce the figures include
 The extracted estimates are combined into summary distributions using the script `code/comb_dists.R`. A function to sample from the obtained summary distributions for `setting = China/Other` and `type = general/ICU` can be found in `code/los_create_distributions.R`. This function returns a set of `sample_size` samples from the specified summary distribution, the fitted Weibull parameters of each individual study distribution and the errors between the observed and fitted quantiles.
 
 ### Contributors
-@esnightingale, @NaomiWaterlow and @erees contributed to this repository.
+@esnightingale, @NaomiWaterlow, @erees and @samclifford contributed to this repository.
 
