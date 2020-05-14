@@ -213,6 +213,10 @@ plot_hist_2 <- function(china_ongoing, china_complete){
 #function to create custom distributions
 create_own_distribution <- function(sample_size = 10000, setting, type, init_values = c(3,27)){
 
+  create_renamer <- function(x){
+    rename_all(x, .funs = function(v){sub(pattern="_ICU", replacement="", v)})
+  }
+  
   if ( setting == "China" && type == "General"){
     # run the function to create an overall distribution for los in China, General LOS
     samples_generated <- create_dist_weibull_discrete(los_general_china_s,
@@ -229,14 +233,15 @@ create_own_distribution <- function(sample_size = 10000, setting, type, init_val
   
   if ( setting == "Rest_of_World" & type == "ICU"){
     # run the function to create an overall distribution for los in China, ICU LOS
-    samples_generated <- create_dist_weibull_discrete(los_icu_world_s,
+    
+    samples_generated <- create_dist_weibull_discrete(create_renamer(los_icu_world_s),
                                                           sample_size = sample_size, 
                                                           init_values = init_values)
   }
   
   if ( setting == "China" & type == "ICU"){
     # run the function to create an overall distribution for los in China, ICU LOS
-    samples_generated <- create_dist_weibull_discrete(los_icu_china_s,
+    samples_generated <- create_dist_weibull_discrete(create_renamer(los_icu_china_s),
                                                           sample_size = sample_size, 
                                                           init_values = init_values)
   }

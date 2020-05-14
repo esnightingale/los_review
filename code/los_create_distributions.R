@@ -26,11 +26,67 @@ source(here::here("code","comb_dist_data.R"))
 #         errors - the magnitude of error for each fit.
 
 n <- 100000
-calculated_distribution <- create_own_distribution(sample_size = n, 
-                                                setting = "China",
-                                                type = "General")
+
+calculated_distribution <- 
+    expand.grid(setting = c("China", "Rest_of_World"),
+                type    = c("General", "ICU")) %>%
+    dplyr::rowwise(.) %>%
+    tidyr::nest(data = -c(setting, type)) %>%
+    dplyr::mutate(id = 1:nrow(.))
+
+calculated_distribution$distribution <-
+    dplyr::rowwise(calculated_distribution) %>%
+    dplyr::group_split(.) %>%
+    purrr::map(., ~create_own_distribution(n, .x$setting,  .x$type))
+
+calculated_distribution <- tidyr::unnest_wider(calculated_distribution, distribution)
+
+dplyr::select(calculated_distribution, setting, type, samples) %>%
+    tidyr::unnest(samples) %>%
+    dplyr::ungroup(.) %>%
+    dplyr::group_by_at(.vars = dplyr::vars(-samples)) %>%
+    dplyr::summarise_at(.vars = dplyr::vars(samples),
+                        .funs = list(mean = mean,
+                                     median = median,
+                                     cv = function(x){sd(x)/mean(x)},
+                                     q_25 = function(x){quantile(x, 0.25)},
+                                     q_75 = function(x){quantile(x, 0.75)}))
+
+distribution_samples <- 
+    dplyr::select(calculated_distribution, setting, type, samples) %>%
+    tidyr::unnest(samples) %>%
+    dplyr::ungroup(.)
+
+ggplot2::ggplot(data=distribution_samples, aes(x=samples)) +
+    ggplot2::geom_histogram(binwidth = 1) +
+    ggplot2::facet_grid(setting ~ type) +
+    ggplot2::xlim(c(0, 60))
+
 
 #extract the sample size
-distribution_samples <- calculated_distribution[["samples"]]
+distribution_parameters <-
+    dplyr::mutate(calculated_distribution, 
+                  parameters = purrr::map(parameters,
+                                          ~data.frame(t(.x)) %>%
+                                              dplyr::rename(shape = X1,
+                                                            scale = X2,
+                                                            N     = X3))) %>%
+    dplyr::select(setting, type, parameters) %>%
+    tidyr::unnest(parameters) 
 
-hist(distribution_samples, breaks= 50)
+# fit distribution
+
+distribution_samples %>%
+    tidyr::nest(data = -c(setting, type)) %>%
+    dplyr::mutate(
+        fitdist = purrr::map(data,
+                             ~fitdistrplus::fitdist(
+                                 unlist(.x),
+                                 distr = "weibull",
+                                 method = "qme",
+                                 probs = c(0.25, 0.75),
+                                 start = list(shape = 3,
+                                              scale = 27)
+                             )),
+        parameters = purrr::map(fitdist, "estimate")) %>%
+    tidyr::unnest_wider(parameters) 

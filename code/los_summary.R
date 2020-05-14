@@ -24,57 +24,65 @@ source(here::here("code","plot_function.R"))
 # Data set up
 # ---------------------------------------------------------------------------- #
 
-dat <- read.csv(here::here("data","LOS analysis dataset - Sheet1.csv"))
+dat <- read.csv(here::here("data","LOS analysis dataset.csv"),
+                stringsAsFactors = F)
 # names(dat)
 
 
 los <- dat %>%
-  select(StudyNo, Author, Title, date_published, date_first_admit, date_last_admit, Country, 
-         All.patients.discharged..dead.,age_group, covid_severity, grouped_by_severity, 
-         other_feature_comorbidity, trt_group, other_group, outcome, los_group, plot_cat, N, 
-         perc_male, age_med, age_mean, age_specific_for_group, plot_cat, 
-         LOS_med, LOS_q25, LOS_q75, LOS_mean, LOS_sd, LOS_min, LOS_max, 
-         LOS_nonICU_med, LOS_nonICU_q25, LOS_nonICU_q75, 
-         LOS_ICU_med, LOS_ICU_q25,LOS_ICU_q75, LOS_ICU_mean, LOS_ICU_sd) %>%
-  mutate_at(vars(date_published:date_last_admit),
-            guess_dates,
-            error_tolerance = 1) %>%
-  mutate(
-    complete_fup = factor(All.patients.discharged..dead., levels = c("Yes","No")),
-    outcome = factor(outcome, levels = c("All", "Alive", "Dead")),
+  dplyr::select(StudyNo, Author, Title, date_published, date_first_admit, date_last_admit, Country, 
+                All.patients.discharged..dead.,age_group, covid_severity, grouped_by_severity, 
+                other_feature_comorbidity, trt_group, other_group, outcome, los_group, plot_cat, N, 
+                perc_male, age_med, age_mean, age_specific_for_group, plot_cat, 
+                LOS_med, LOS_q25, LOS_q75, LOS_mean, LOS_sd, LOS_min, LOS_max, 
+                LOS_nonICU_med, LOS_nonICU_q25, LOS_nonICU_q75, 
+                LOS_ICU_med, LOS_ICU_q25,LOS_ICU_q75, LOS_ICU_mean, LOS_ICU_sd) %>%
+  dplyr::mutate_at(vars(date_published:date_last_admit),
+                   guess_dates,
+                   error_tolerance = 1) %>%
+  dplyr::mutate(
+    complete_fup   = factor(All.patients.discharged..dead., levels = c("Yes","No")),
+    outcome        = factor(outcome, levels = c("All", "Alive", "Dead")),
     plot_oth_group = paste(outcome, other_group, sep = ":"),
-    avg_age = case_when(!is.na(age_med) ~ age_med,
-                        is.na(age_med) ~ age_mean))
+    avg_age        = dplyr::case_when(!is.na(age_med) ~ age_med,
+                                      is.na(age_med) ~ age_mean)) %>%
+  dplyr::mutate(Country = if_else(Country == "US", "USA", Country))
 
 
 # Copy down Study info to all rows
-study_vars <- c("StudyNo","Author","Title","date_published","date_first_admit", "date_last_admit", "Country")
-for (i in 1:nrow(los)){
-  if (los$Title[i] != ""){study_info <- los[i, study_vars]
-  }else{los[i, study_vars] <-  study_info}
-}
+study_vars <- c("StudyNo", "Author", "Title",
+                "date_published", "date_first_admit", "date_last_admit", 
+                "Country")
 
+
+
+
+los <- tidyr::fill(los, .direction = "down", StudyNo) %>%
+  split(.$StudyNo) %>%
+  purrr::map(.f = ~dplyr::mutate_at(.x,
+                                    .vars = tidyselect::all_of(study_vars),
+                                    .funs = function(x) sub(pattern = "^$", replacement = NA, x = x)))  %>%
+  purrr::map_df(.f= ~tidyr::fill(.x, .direction = "down", tidyselect::all_of(study_vars)))
 
 # Define study date: first admission if available, otherwise last admission
-los$study_date <- los$date_first_admit
-los$study_date[is.na(los$study_date)] <- los$date_last_admit[is.na(los$study_date)]
-los$study_date[is.na(los$study_date)] <- los$date_published[is.na(los$study_date)]
-
+los <- dplyr::mutate(los, 
+                     study_date = dplyr::case_when(
+                       !is.na(date_first_admit) ~ date_first_admit,
+                       !is.na(date_last_admit)  ~ date_last_admit,
+                       !is.na(date_published)   ~ date_published))
 
 # Define study identifier: concatenate author with study date
 los <- 
   los %>%
-  mutate(Study = as.factor(trimws(sprintf("%s (%s)",
-                                          Author, 
-                                          study_date))),
-         Setting = case_when(Country == "China" ~ "China",
-                             Country != "China" ~ "Other")) %>%
-  select(Study, everything()) 
+  dplyr::mutate(Study = as.factor(trimws(sprintf("%s (%s)",
+                                                 Author, 
+                                                 study_date))),
+                Setting = dplyr::case_when(Country == "China" ~ "China",
+                                           Country != "China" ~ "Other")) %>%
+  dplyr::select(Study, dplyr::everything()) 
 
 
-# Pad study identifier for plotting consistency
-los$Study <- str_pad(los$Study, width = max(str_length(los$Study)), side = "left")
-n_distinct(los$Study)
+dplyr::n_distinct(los$Study)
 
 
 # ---------------------------------------------------------------------------- #
@@ -84,40 +92,47 @@ n_distinct(los$Study)
 
 # Summarise patient characteristics - age
 los %>%
-  filter(age_group != "pediatric") -> adult
-wt.mean(adult$avg_age, wt = adult$N) # 59.33595
-wt.sd(adult$avg_age, wt = adult$N) # 9.646322
-wt.mean(adult$perc_male, wt = adult$N) # 56.2328
-wt.sd(adult$perc_male, wt = adult$N) #  10.93115
+  dplyr::filter(age_group != "pediatric") -> adult
 
+# wt.mean from SDMtools
+wt.summary <- function(x){
+  dplyr::summarise_at(x, .vars = vars(avg_age, perc_male), 
+                      list(mean = ~wt.mean(., wt = N),
+                           sd   = ~wt.sd(., wt = N),
+                           n    = ~length(na.omit(.)))) %>%
+    tidyr::gather(key, value) %>%
+    transform(., variable = sub("(.*)_.*", "\\1", key), summary = sub(".*_", "", key)) %>%
+    dplyr::arrange(variable, summary) %>%
+    dplyr::select(variable, summary, tidyselect::everything(), value, -key) }
+
+wt.summary(los)  
 
 los %>%
-  filter(age_group == "pediatric") -> ped
-wt.mean(ped$avg_age, wt = ped$N) # 6.933
-wt.sd(ped$avg_age, wt = ped$N) # 2.805726
+  split(.$age_group) %>%
+  purrr::map_df(~wt.summary(.x), .id = "age_group")
 
 
 # Identify which estimates are reported as mean/median
 los <- 
   los %>%
-  mutate(metric = case_when((!is.na(LOS_mean) | !is.na(LOS_ICU_mean)) ~ "mean",
-                            (!is.na(LOS_med) | !is.na(LOS_nonICU_med) | !is.na(LOS_ICU_med)) ~ "median")) %>%
-  filter(!is.na(metric)) # filter out study summary rows without any LOS value
+  dplyr::mutate(metric = dplyr::case_when((!is.na(LOS_mean) | !is.na(LOS_ICU_mean)) ~ "mean",
+                                          (!is.na(LOS_med) | !is.na(LOS_nonICU_med) | !is.na(LOS_ICU_med)) ~ "median")) %>%
+  dplyr::filter(!is.na(metric)) # filter out study summary rows without any LOS value
 
 
 # Split out general LOS from ICU
 los_gen <- los %>%
-  filter(los_group %in% c("general", "general/ICU","non-ICU")) %>%
-  select(-LOS_ICU_med:-LOS_ICU_sd) %>% 
-  mutate(LOS_avg = LOS_med)
+  dplyr::filter(los_group %in% c("general", "general/ICU","non-ICU")) %>%
+  dplyr::select(-LOS_ICU_med:-LOS_ICU_sd) %>% 
+  dplyr::mutate(LOS_avg = LOS_med)
 
 
 los_icu <- los %>%
-  filter(los_group %in% c("ICU", "general/ICU"))  %>%
-  select(-LOS_med:-LOS_max) %>%
-  mutate(LOS_avg = LOS_ICU_med,
-         LOS_q25 = LOS_ICU_q25,
-         LOS_q75 = LOS_ICU_q75) 
+  dplyr::filter(los_group %in% c("ICU", "general/ICU"))  %>%
+  dplyr::select(-LOS_med:-LOS_max) %>%
+  dplyr::mutate(LOS_avg = LOS_ICU_med,
+                LOS_q25 = LOS_ICU_q25,
+                LOS_q75 = LOS_ICU_q75) 
 
 
 # ---------------------------------------------------------------------------- #
@@ -127,14 +142,14 @@ los_icu <- los %>%
 # Function to calculate weibull quantiles from mean/sd
 get_weib_quants <- function(input, meanvar, sdvar){
   
-    parms <- mixdist::weibullpar(mu = input[meanvar], sigma = input[sdvar])
-    dist <- distcrete::distcrete(name = "weibull",
-                                 interval = 1, 
-                                 w = 0.5,
-                                 shape = parms$shape, 
-                                 scale = parms$scale) 
-    quants <- dist$q(c(0.5,0.25,0.75))
-
+  parms <- mixdist::weibullpar(mu = input[meanvar], sigma = input[sdvar])
+  dist <- distcrete::distcrete(name = "weibull",
+                               interval = 1, 
+                               w = 0.5,
+                               shape = parms$shape, 
+                               scale = parms$scale) 
+  quants <- dist$q(c(0.5,0.25,0.75))
+  
   return(quants)
 }
 
@@ -146,7 +161,7 @@ for (i in 1:nrow(los_gen)){
     if(!is.na(los_gen$LOS_sd[i])){
       los_gen[i,c("LOS_avg","LOS_q25","LOS_q75")] <- get_weib_quants(los_gen[i,], "LOS_mean", "LOS_sd")
       los_gen$metric[i] <- "median (derived)"
-  }}
+    }}
 }
 
 
@@ -178,12 +193,14 @@ los_gen %>%
 
 # Figure 2: main estimates from each study for general LOS, by discharge status. 
 # (i.e. excluding specific severity/comorbidity/treatment subgroups).
-png(filename = here::here("figures","fig2_outcomes_bysetting.png"), height = 1800, width = 1500, res = 150)
-main %>%
-  plot_los_outcome(col = "outcome") +  
-  labs(col = "Discharge status", 
-       title = "Length of stay in hospital, by discharge status") 
-dev.off()
+
+ggplot2::ggsave(filename = here::here("figures","fig2_outcomes_bysetting.png"),
+                height = 12, width = 10, dpi = 150, units = "in",
+                plot = {
+                  plot_los_outcome(main, col = "outcome") +  
+                    labs(col = "Discharge status", 
+                         title = "Length of stay in hospital, by discharge status")}, )
+
 
 
 # Supplementary figure: Ordered by median age
