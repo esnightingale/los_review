@@ -215,6 +215,34 @@ pdf(here::here("figures","Comparison_weighted.pdf"))
 COMPARISON_PLOT
 dev.off()
 
+#### Compare overlapping populations with non-overlapping populations - general China 
+
+
+general_nonoverlapping_china <- create_dist_weibull_discrete(los_general_china_overlapping_s,
+                                                             sample_size = sample_size,
+                                                             init_values = c(3,27)) 
+
+quants_china_general_overlapping <- quantile(general_nonoverlapping_china[["samples"]], probs=iqr)
+
+general_nonoverlapping_china_df <- data.frame(samples =general_nonoverlapping_china[["samples"]], location = "China", type = "General", overlapping = "no")
+general_overlapping_china_df <-  data.frame(samples =general_samples_china[["samples"]], location = "China", type = "General", overlapping = "yes")
+
+OVERLAPPING_PLOT <- ggplot(general_overlapping_china_df, aes(x=samples), colour = "darkgrey",
+                           fill = "darkgrey") +
+  geom_histogram(bins=61)+
+  theme_bw() +
+  scale_x_continuous(breaks = seq(0, 60, by = 5), limits=c(0,60)) +
+  labs(x ="Length of Stay (days)", y="Counts") +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank()) +
+  geom_histogram(data=general_nonoverlapping_china_df,bins=61,aes(x=samples, alpha =0.1),
+                 fill = "#FF6B94", alpha= 0.6) +
+  scale_colour_manual(values= alpha(c("#FF6B94"), 0.6))
+OVERLAPPING_PLOT
+
+
+
 write.csv( general_samples_china[["samples"]], "distribution_general_china.csv")
 write.csv( icu_samples_china[["samples"]],"distribution_icu_china.csv")
 write.csv( general_samples_world[["samples"]], "distribution_general_world.csv")

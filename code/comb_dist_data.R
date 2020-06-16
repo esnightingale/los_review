@@ -6,7 +6,7 @@
 dat <- read.csv(here::here("data","LOS analysis dataset.csv"))
 
 # Extract relevant columns
-sub_dat <- dat[which(dat$plot_cat== "main"),c("Included","Author", "All.patients.discharged..dead." ,"los_group", "End.point", "Country", "plot_cat", "N", "LOS_med", "LOS_q25", "LOS_q75", 
+sub_dat <- dat[which(dat$plot_cat== "main"),c("Included","Author", "overlappingInclude", "All.patients.discharged..dead." ,"los_group", "End.point", "Country", "plot_cat", "N", "LOS_med", "LOS_q25", "LOS_q75", 
                   "LOS_mean", "LOS_sd", "LOS_ICU_med", "LOS_ICU_q25", "LOS_ICU_q75", "LOS_ICU_mean",
                   "LOS_ICU_sd")]
 
@@ -24,6 +24,7 @@ los_general_china <- los_general[which(los_general$Country=="China"),]
 los_general_world <- los_general[which(los_general$Country!="China"),]
 los_icu_china <- los_icu[which(los_icu$Country=="China"),]
 los_icu_world <- los_icu[which(los_icu$Country!="China"),]
+
 
 #Define important parameters for general and ICU
 icu_parameters <- c("N", "LOS_ICU_med", "LOS_ICU_q25", "LOS_ICU_q75", "LOS_ICU_mean", "LOS_ICU_sd")
@@ -68,7 +69,10 @@ los_icu_world_s <- los_icu_world[,icu_parameters]
 los_general_china_complete <- los_general_china[which(los_general_china$All.patients.discharged..dead. == "Yes"),]
 los_general_china_ongoing <- los_general_china[which(los_general_china$All.patients.discharged..dead. == "No"),]
 los_general_china_complete_s <- los_general_china_complete[,general_parameters]
-los_general_china_ongoing_s <- los_general_china[,general_parameters]
+los_general_china_ongoing_s <- los_general_china_ongoing[,general_parameters]
 
+# subset general by overlapping populations or not
+# Only 16 studies, instead of 39... 
 
-
+los_general_china_overlapping <- los_general_china[which(los_general_china$overlappingInclude == 1),]
+los_general_china_overlapping_s <- los_general_china_overlapping[,general_parameters]

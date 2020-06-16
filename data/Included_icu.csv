@@ -1,10 +1,10 @@
-"","Included","Author","All.patients.discharged..dead.","los_group","End.point","Country","plot_cat","N","LOS_med","LOS_q25","LOS_q75","LOS_mean","LOS_sd","LOS_ICU_med","LOS_ICU_q25","LOS_ICU_q75","LOS_ICU_mean","LOS_ICU_sd","info_count"
-"1",1,"Bhatraju et al.","No","general/ICU","Discharge or death","US","main",24,12,8,18,NA,NA,9,4,14,NA,NA,4
-"6",1,"Cao et al.","No","general/ICU","Discharged or death","China","main",199,15,12,17,NA,NA,10,5,14,NA,NA,4
-"32",1,"Graselli et al","No","ICU","ICU discharge/death","Italy","main",1591,NA,NA,NA,NA,NA,9,6,13,NA,NA,4
-"38",1,"ICNARC","No","ICU","Discharge","UK","main",1437,NA,NA,NA,NA,NA,5,2,9,NA,NA,4
-"39",1,"ICNARC","No","ICU","Death","UK","main",1499,NA,NA,NA,NA,NA,6,4,10,NA,NA,4
-"90",1,"Yang et al.","Yes","ICU","Death","China","main",32,NA,NA,NA,NA,NA,7,3,11,NA,NA,4
-"96",1,"Zhang et al.","No","ICU","Discharge to ward","China","main",23,NA,NA,NA,NA,NA,8,5,13,NA,NA,4
-"97",1,"Zhang et al.","No","ICU","Death in ICU","China","main",9,NA,NA,NA,NA,NA,11,4.5,14.5,NA,NA,4
-"105",1,"Zhou et al.","Yes","general/ICU","Death or discharge","China","main",191,11,7,14,NA,NA,8,4,12,NA,NA,4
+"","Included","Author","overlappingInclude","All.patients.discharged..dead.","los_group","End.point","Country","plot_cat","N","LOS_med","LOS_q25","LOS_q75","LOS_mean","LOS_sd","LOS_ICU_med","LOS_ICU_q25","LOS_ICU_q75","LOS_ICU_mean","LOS_ICU_sd","info_count"
+"1",1,"Bhatraju et al.",1,"No","general/ICU","Discharge or death","US","main",24,12,8,18,NA,NA,9,4,14,NA,NA,4
+"6",1,"Cao et al.",0,"No","general/ICU","Discharged or death","China","main",199,15,12,17,NA,NA,10,5,14,NA,NA,4
+"32",1,"Graselli et al",1,"No","ICU","ICU discharge/death","Italy","main",1591,NA,NA,NA,NA,NA,9,6,13,NA,NA,4
+"38",1,"ICNARC",1,"No","ICU","Discharge","UK","main",1437,NA,NA,NA,NA,NA,5,2,9,NA,NA,4
+"39",1,"ICNARC",1,"No","ICU","Death","UK","main",1499,NA,NA,NA,NA,NA,6,4,10,NA,NA,4
+"90",1,"Yang et al.",0,"Yes","ICU","Death","China","main",32,NA,NA,NA,NA,NA,7,3,11,NA,NA,4
+"96",1,"Zhang et al.",0,"No","ICU","Discharge to ward","China","main",23,NA,NA,NA,NA,NA,8,5,13,NA,NA,4
+"97",1,"Zhang et al.",0,"No","ICU","Death in ICU","China","main",9,NA,NA,NA,NA,NA,11,4.5,14.5,NA,NA,4
+"105",1,"Zhou et al.",1,"Yes","general/ICU","Death or discharge","China","main",191,11,7,14,NA,NA,8,4,12,NA,NA,4
