@@ -185,13 +185,13 @@ quants_world_icu_2 <- quantile(icu_samples_world_2[["samples"]],probs=iqr)
 #Combine into dataframes for plotting
 icu_china_w <- data.frame(samples =icu_samples_china[["samples"]], location = "China", type = "ICU", weighted = "yes")
 icu_world_w <- data.frame(samples =icu_samples_world[["samples"]], location = "Rest of World", type = "ICU", weighted = "yes")
-general_china_w <- data.frame(samples =general_samples_china[["samples"]], location = "China", type = "General", weighted = "yes")
-general_world_w <- data.frame(samples =general_samples_world[["samples"]], location = "Rest of World", type = "General", weighted = "yes")
+general_china_w <- data.frame(samples =general_samples_china[["samples"]], location = "China", type = "Total", weighted = "yes")
+general_world_w <- data.frame(samples =general_samples_world[["samples"]], location = "Rest of World", type = "Total", weighted = "yes")
 
 icu_china_nw <- data.frame(samples =icu_samples_china_2[["samples"]], location = "China", type = "ICU", weighted = "no")
 icu_world_nw <- data.frame(samples =icu_samples_world_2[["samples"]], location = "Rest of World", type = "ICU", weighted = "no")
-general_china_nw <- data.frame(samples =general_samples_china_2[["samples"]], location = "China", type = "General", weighted = "no")
-general_world_nw <- data.frame(samples =general_samples_world_2[["samples"]], location = "Rest of World", type = "General", weighted = "no")
+general_china_nw <- data.frame(samples =general_samples_china_2[["samples"]], location = "China", type = "Total", weighted = "no")
+general_world_nw <- data.frame(samples =general_samples_world_2[["samples"]], location = "Rest of World", type = "Total", weighted = "no")
 
 all_samples_weighted <- rbind(icu_china_w, icu_world_w, general_china_w, general_world_w)
 all_samples_unweighted <- rbind(icu_china_nw, icu_world_nw, general_china_nw, general_world_nw)

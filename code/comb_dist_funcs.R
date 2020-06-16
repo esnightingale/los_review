@@ -166,8 +166,8 @@ plot_hist_1 <- function(icu_china, icu_world, general_china, general_world){
 
   icu_china <- data.frame(samples =icu_china, location = "China", type = "ICU")
   icu_world <- data.frame(samples =icu_world, location = "Rest of World", type = "ICU")
-  general_china <- data.frame(samples =general_china, location = "China", type = "General")
-  general_world <- data.frame(samples =general_world, location = "Rest of World", type = "General")
+  general_china <- data.frame(samples =general_china, location = "China", type = "Total")
+  general_world <- data.frame(samples =general_world, location = "Rest of World", type = "Total")
   
   all_samples <- rbind(icu_china, icu_world, general_china, general_world)
 
