@@ -6,11 +6,18 @@
 dat <- read.csv(here::here("data","LOS analysis dataset.csv"))
 
 # Extract relevant columns
-sub_dat <- dat[which(dat$plot_cat== "main"),c("Included","Author", "overlappingInclude", "All.patients.discharged..dead." ,"los_group", "End.point", "Country", "plot_cat", "N", "LOS_med", "LOS_q25", "LOS_q75", 
+sub_dat <- dat[which(dat$plot_cat== "main"),c("Included","Author","date_published", "All.patients.discharged..dead." ,"los_group", "outcome", "Country", "plot_cat", "N", "LOS_med", "LOS_q25", "LOS_q75", 
                   "LOS_mean", "LOS_sd", "LOS_ICU_med", "LOS_ICU_q25", "LOS_ICU_q75", "LOS_ICU_mean",
                   "LOS_ICU_sd")]
 
-# Exclude thise  with no_group, and those with a 0 in included column
+# Split according to discharge status
+los_general_china_surv <- filter(sub_dat, All.patients.discharged..dead == "Yes", outcome == "Alive" & los_group %in% c("general","general/ICU") & Country == "China")
+los_general_china_dead <- filter(sub_dat,  All.patients.discharged..dead == "Yes", outcome == "Dead" & los_group %in% c("general","general/ICU") & Country == "China")
+
+## EXCLUDING WEIRD WANG
+los_general_china_surv <- filter(los_general_china_surv, Auther != "Wang et al.")
+
+# Exclude those with no_group, and those with a 0 in included column
 sub_dat <- sub_dat[which(sub_dat$los_group != ""),]
 sub_dat <- sub_dat[which(sub_dat$Included==1), ]
 
@@ -19,12 +26,12 @@ los_icu <- sub_dat[which(sub_dat$los_group == "ICU" |
                            sub_dat$los_group == "general/ICU"),]
 los_general <- sub_dat[which(sub_dat$los_group == "general" |
                                sub_dat$los_group == "general/ICU"),]
+
 #split into china vs world
 los_general_china <- los_general[which(los_general$Country=="China"),]
 los_general_world <- los_general[which(los_general$Country!="China"),]
 los_icu_china <- los_icu[which(los_icu$Country=="China"),]
 los_icu_world <- los_icu[which(los_icu$Country!="China"),]
-
 
 #Define important parameters for general and ICU
 icu_parameters <- c("N", "LOS_ICU_med", "LOS_ICU_q25", "LOS_ICU_q75", "LOS_ICU_mean", "LOS_ICU_sd")
@@ -38,12 +45,18 @@ los_icu$info_count <- apply(los_icu[, icu_parameters], 1, function(x) sum(!is.na
 los_icu_china$info_count <- apply(los_icu_china[, icu_parameters], 1, function(x) sum(!is.na(x)))
 los_icu_world$info_count <- apply(los_icu_world[, icu_parameters], 1, function(x) sum(!is.na(x)))
 
+los_general_china_surv$info_count <- apply(los_general_china_surv[, general_parameters], 1, function(x) sum(!is.na(x)))
+los_general_china_dead$info_count <- apply(los_general_china_dead[, general_parameters], 1, function(x) sum(!is.na(x)))
+
 los_general <- los_general[which(los_general$info_count>2),]
 los_general_china <- los_general_china[which(los_general_china$info_count>2),]
 los_general_world <- los_general_world[which(los_general_world$info_count>2),]
 los_icu <- los_icu[which(los_icu$info_count>2),]
 los_icu_china <- los_icu_china[which(los_icu_china$info_count>2),]
 los_icu_world <- los_icu_world[which(los_icu_world$info_count>2),]
+
+los_general_china_surv <- filter(los_general_china_surv,info_count>2 & !is.na(N))
+los_general_china_dead <- filter(los_general_china_dead,info_count>2 & !is.na(N))
 
 # remove those with no sample size
 los_general <- los_general[which(!is.na(los_general$N)),]
@@ -52,6 +65,8 @@ los_general_world <- los_general_world[which(!is.na(los_general_world$N)),]
 los_icu <- los_icu[which(!is.na(los_icu$N)),]
 los_icu_china <- los_icu_china[which(!is.na(los_icu_china$N)),]
 los_icu_world <- los_icu_world[which(!is.na(los_icu_world$N)),]
+
+
 
 #save Includedd studies
 write.csv(los_general, here::here("data","Included_general.csv"))
@@ -69,10 +84,7 @@ los_icu_world_s <- los_icu_world[,icu_parameters]
 los_general_china_complete <- los_general_china[which(los_general_china$All.patients.discharged..dead. == "Yes"),]
 los_general_china_ongoing <- los_general_china[which(los_general_china$All.patients.discharged..dead. == "No"),]
 los_general_china_complete_s <- los_general_china_complete[,general_parameters]
-los_general_china_ongoing_s <- los_general_china_ongoing[,general_parameters]
+los_general_china_ongoing_s <- los_general_china[,general_parameters]
 
-# subset general by overlapping populations or not
-# Only 16 studies, instead of 39... 
 
-los_general_china_overlapping <- los_general_china[which(los_general_china$overlappingInclude == 1),]
-los_general_china_overlapping_s <- los_general_china_overlapping[,general_parameters]
+

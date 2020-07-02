@@ -166,8 +166,8 @@ plot_hist_1 <- function(icu_china, icu_world, general_china, general_world){
 
   icu_china <- data.frame(samples =icu_china, location = "China", type = "ICU")
   icu_world <- data.frame(samples =icu_world, location = "Rest of World", type = "ICU")
-  general_china <- data.frame(samples =general_china, location = "China", type = "Total")
-  general_world <- data.frame(samples =general_world, location = "Rest of World", type = "Total")
+  general_china <- data.frame(samples =general_china, location = "China", type = "General")
+  general_world <- data.frame(samples =general_world, location = "Rest of World", type = "General")
   
   all_samples <- rbind(icu_china, icu_world, general_china, general_world)
 
@@ -213,10 +213,6 @@ plot_hist_2 <- function(china_ongoing, china_complete){
 #function to create custom distributions
 create_own_distribution <- function(sample_size = 10000, setting, type, init_values = c(3,27)){
 
-  create_renamer <- function(x){
-    rename_all(x, .funs = function(v){sub(pattern="_ICU", replacement="", v)})
-  }
-  
   if ( setting == "China" && type == "General"){
     # run the function to create an overall distribution for los in China, General LOS
     samples_generated <- create_dist_weibull_discrete(los_general_china_s,
@@ -233,15 +229,14 @@ create_own_distribution <- function(sample_size = 10000, setting, type, init_val
   
   if ( setting == "Rest_of_World" & type == "ICU"){
     # run the function to create an overall distribution for los in China, ICU LOS
-    
-    samples_generated <- create_dist_weibull_discrete(create_renamer(los_icu_world_s),
+    samples_generated <- create_dist_weibull_discrete(los_icu_world_s,
                                                           sample_size = sample_size, 
                                                           init_values = init_values)
   }
   
   if ( setting == "China" & type == "ICU"){
     # run the function to create an overall distribution for los in China, ICU LOS
-    samples_generated <- create_dist_weibull_discrete(create_renamer(los_icu_china_s),
+    samples_generated <- create_dist_weibull_discrete(los_icu_china_s,
                                                           sample_size = sample_size, 
                                                           init_values = init_values)
   }

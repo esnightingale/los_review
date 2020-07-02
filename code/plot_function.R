@@ -1,11 +1,11 @@
 library(patchwork)
-source(here::here("code","SDMtoolsfuns.R"))
+library(SDMTools)
 library(viridis)
 
 # ------------------------- Plotting function -------------------------------- #
 
 pd <- position_dodge(width = 0.5)
-shapes <- c("median" = 15, "median (derived)" = 17, "mean" = 16)
+shapes <- c("median" = 16, "median (derived)" = 15, "mean" = 17)
 ltypes <- c("Yes" = "solid", "No" = "dashed")
 # palette1 <- c("#9d8EFF","#00A45E","#9E2228","#FF9B91")
 # palette2 <- c( "#4379f2",
@@ -43,12 +43,7 @@ plot_los_outcome <- function(data,
   centre_lines <- unique(pull(data, centre))
   
   data %>%
-    ggplot(aes(y = Study, x = LOS_avg, 
-               xmin = LOS_q25, xmax = LOS_q75, 
-               shape = metric, 
-               lty = !!sym(lty), 
-               col = !!sym(col), 
-               group = !!sym(group))) +
+    ggplot(aes(y = Study, x = LOS_avg, xmin = LOS_q25, xmax = LOS_q75, shape = metric, lty = !!sym(lty), col = !!sym(col), group = !!sym(group))) +
     geom_point(aes(size = N), position=pd) +
     geom_errorbarh(height=0.3, position = pd) +
     geom_vline(aes(xintercept = centre), col = "darkgrey", lty = "longdash") +
@@ -67,8 +62,7 @@ plot_los_outcome <- function(data,
     theme_minimal() +
     theme(strip.text = element_text(size = 15), 
           axis.title = element_text(size = 15),
-          panel.spacing = unit(2, "lines"),
-          axis.text.y = element_text(hjust = 1))
+          panel.spacing = unit(2, "lines")) 
   
 }
 

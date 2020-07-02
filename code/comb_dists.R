@@ -185,13 +185,13 @@ quants_world_icu_2 <- quantile(icu_samples_world_2[["samples"]],probs=iqr)
 #Combine into dataframes for plotting
 icu_china_w <- data.frame(samples =icu_samples_china[["samples"]], location = "China", type = "ICU", weighted = "yes")
 icu_world_w <- data.frame(samples =icu_samples_world[["samples"]], location = "Rest of World", type = "ICU", weighted = "yes")
-general_china_w <- data.frame(samples =general_samples_china[["samples"]], location = "China", type = "Total", weighted = "yes")
-general_world_w <- data.frame(samples =general_samples_world[["samples"]], location = "Rest of World", type = "Total", weighted = "yes")
+general_china_w <- data.frame(samples =general_samples_china[["samples"]], location = "China", type = "General", weighted = "yes")
+general_world_w <- data.frame(samples =general_samples_world[["samples"]], location = "Rest of World", type = "General", weighted = "yes")
 
 icu_china_nw <- data.frame(samples =icu_samples_china_2[["samples"]], location = "China", type = "ICU", weighted = "no")
 icu_world_nw <- data.frame(samples =icu_samples_world_2[["samples"]], location = "Rest of World", type = "ICU", weighted = "no")
-general_china_nw <- data.frame(samples =general_samples_china_2[["samples"]], location = "China", type = "Total", weighted = "no")
-general_world_nw <- data.frame(samples =general_samples_world_2[["samples"]], location = "Rest of World", type = "Total", weighted = "no")
+general_china_nw <- data.frame(samples =general_samples_china_2[["samples"]], location = "China", type = "General", weighted = "no")
+general_world_nw <- data.frame(samples =general_samples_world_2[["samples"]], location = "Rest of World", type = "General", weighted = "no")
 
 all_samples_weighted <- rbind(icu_china_w, icu_world_w, general_china_w, general_world_w)
 all_samples_unweighted <- rbind(icu_china_nw, icu_world_nw, general_china_nw, general_world_nw)
@@ -215,36 +215,49 @@ pdf(here::here("figures","Comparison_weighted.pdf"))
 COMPARISON_PLOT
 dev.off()
 
-#### Compare overlapping populations with non-overlapping populations - general China 
-
-
-general_nonoverlapping_china <- create_dist_weibull_discrete(los_general_china_overlapping_s,
-                                                             sample_size = sample_size,
-                                                             init_values = c(3,27)) 
-
-quants_china_general_overlapping <- quantile(general_nonoverlapping_china[["samples"]], probs=iqr)
-
-general_nonoverlapping_china_df <- data.frame(samples =general_nonoverlapping_china[["samples"]], location = "China", type = "General", overlapping = "no")
-general_overlapping_china_df <-  data.frame(samples =general_samples_china[["samples"]], location = "China", type = "General", overlapping = "yes")
-
-OVERLAPPING_PLOT <- ggplot(general_overlapping_china_df, aes(x=samples), colour = "darkgrey",
-                           fill = "darkgrey") +
-  geom_histogram(bins=61)+
-  theme_bw() +
-  scale_x_continuous(breaks = seq(0, 60, by = 5), limits=c(0,60)) +
-  labs(x ="Length of Stay (days)", y="Counts") +
-  theme(axis.title.y=element_blank(),
-        axis.text.y=element_blank(),
-        axis.ticks.y=element_blank()) +
-  geom_histogram(data=general_nonoverlapping_china_df,bins=61,aes(x=samples, alpha =0.1),
-                 fill = "#FF6B94", alpha= 0.6) +
-  scale_colour_manual(values= alpha(c("#FF6B94"), 0.6))
-OVERLAPPING_PLOT
-
-
-
 write.csv( general_samples_china[["samples"]], "distribution_general_china.csv")
 write.csv( icu_samples_china[["samples"]],"distribution_icu_china.csv")
 write.csv( general_samples_world[["samples"]], "distribution_general_world.csv")
 write.csv(icu_samples_world[["samples"]], "distribution_icu_world.csv" )
 
+
+### Summary by discharge status ### 
+
+# run the function to create an overall distribution for los in patients who survived, General Hopsital
+general_samples_surv <- create_dist_weibull_discrete(dplyr::select(los_general_china_surv, N, LOS_med:LOS_sd),
+                                                      sample_size = sample_size,
+                                                      init_values = c(3,27))
+# for los in those who died, General Hopsital
+general_samples_dead <- create_dist_weibull_discrete(dplyr::select(los_general_china_dead, N, LOS_med:LOS_sd),
+                                                      sample_size = sample_size,
+                                                      init_values = c(3,27))
+
+all_samples_status <- rbind(data.frame(samples =general_samples_surv[["samples"]], status = "Discharged alive"),
+                            data.frame(samples =general_samples_dead[["samples"]], status = "Died"))
+
+# Create a histogram for the different sub_groups
+HIST_PLOT_STATUS <- ggplot(all_samples_status, aes(x=samples), colour = "darkgrey",
+                          fill = "darkgrey") +
+  geom_histogram(bins=61)+
+  facet_grid(~status) + theme_bw() +
+  scale_x_continuous(breaks = seq(0, 60, by = 5), limits=c(0,60)) +
+  labs(x ="Length of Stay (days)", y="Counts") +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank()) +
+  geom_histogram(data=all_samples_status,bins=61,aes(x=samples, alpha =0.1),
+                 fill = "#FF6B94", alpha= 0.6) +
+  scale_colour_manual(values= alpha(c("#FF6B94"), 0.6))
+HIST_PLOT_STATUS
+
+pdf(here::here("figures","dischargestatus.pdf"), width = 8, height = 4)
+HIST_PLOT_STATUS
+dev.off()
+
+png(here::here("figures","dischargestatus.png"), width = 600, height = 300)
+HIST_PLOT_STATUS
+dev.off()
+
+# Calcualte the quantiles for each subgroup
+quants_surv_general <- quantile(general_samples_surv[["samples"]], probs=iqr)
+quants_died_general <- quantile(general_samples_died[["samples"]], probs=iqr)
